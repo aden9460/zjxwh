@@ -1,7 +1,8 @@
 .portfolio-page {
 	position: relative;
 	z-index: 2;
-	width: min(1180px, calc(100% - 32px));
+	width: calc(100% - 32px);
+	max-width: 1180px;
 	min-height: 100vh;
 	margin: 0 auto;
 	padding: 72px 0 42px;
@@ -324,7 +325,8 @@
 
 @media screen and (max-width: 760px) {
 	.portfolio-page {
-		width: min(100% - 20px, 1180px);
+		width: calc(100% - 20px);
+		max-width: 1180px;
 		padding-top: 28px;
 	}
 
