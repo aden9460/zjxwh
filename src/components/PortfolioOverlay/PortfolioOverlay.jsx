@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
   campus,
   honors,
@@ -9,12 +9,88 @@ import {
 } from "../../portfolioData";
 import styles from "./PortfolioOverlay.module.scss";
 
-const PortfolioOverlay = () => {
-  const [activeProject, setActiveProject] = useState(null);
+export const ProjectModal = ({ project, onClose }) => {
+  if (!project) return null;
+
+  return (
+    <div className={styles.modalBackdrop} onClick={onClose}>
+      <article
+        className={styles.modal}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          className={styles.closeButton}
+          type="button"
+          onClick={onClose}
+          aria-label="关闭项目详情"
+        >
+          x
+        </button>
+        <div className={styles.modalHeader}>
+          <span>{project.meta}</span>
+          <h2>{project.title}</h2>
+          <p>{project.description}</p>
+        </div>
+        <ul className={styles.highlights}>
+          {project.highlights.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        {project.attachment && (
+          <a
+            className={styles.attachment}
+            href={project.attachment}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            打开完整策划作品
+          </a>
+        )}
+        {project.images.length > 0 && (
+          <div className={styles.gallery}>
+            {project.images.map((image, index) => (
+              <a
+                href={image}
+                target="_blank"
+                rel="noopener noreferrer"
+                key={image}
+              >
+                <img
+                  src={image}
+                  alt={`${project.title} 项目图片 ${index + 1}`}
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        )}
+      </article>
+    </div>
+  );
+};
+
+const PortfolioOverlay = ({ isOpen, onOpen, onClose, onProjectOpen }) => {
   const featuredProjects = useMemo(() => projects.slice(0, 3), []);
+
+  if (!isOpen) {
+    return (
+      <div className={styles.fullViewLauncher}>
+        <button type="button" onClick={onOpen}>
+          完整简历视图
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.portfolioShell}>
+      <button
+        className={styles.panelCloseButton}
+        type="button"
+        onClick={onClose}
+      >
+        返回 3D 主页
+      </button>
       <main
         className={styles.portfolioPanel}
         onWheel={(event) => event.stopPropagation()}
@@ -43,7 +119,7 @@ const PortfolioOverlay = () => {
                 className={styles.projectCard}
                 key={project.id}
                 type="button"
-                onClick={() => setActiveProject(project)}
+                onClick={() => onProjectOpen(project)}
               >
                 <img src={project.cover} alt="" loading="lazy" />
                 <span>{project.meta}</span>
@@ -143,64 +219,6 @@ const PortfolioOverlay = () => {
         </section>
       </main>
 
-      {activeProject && (
-        <div
-          className={styles.modalBackdrop}
-          onClick={() => setActiveProject(null)}
-        >
-          <article
-            className={styles.modal}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className={styles.closeButton}
-              type="button"
-              onClick={() => setActiveProject(null)}
-              aria-label="关闭项目详情"
-            >
-              x
-            </button>
-            <div className={styles.modalHeader}>
-              <span>{activeProject.meta}</span>
-              <h2>{activeProject.title}</h2>
-              <p>{activeProject.description}</p>
-            </div>
-            <ul className={styles.highlights}>
-              {activeProject.highlights.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            {activeProject.attachment && (
-              <a
-                className={styles.attachment}
-                href={activeProject.attachment}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                打开完整策划作品
-              </a>
-            )}
-            {activeProject.images.length > 0 && (
-              <div className={styles.gallery}>
-                {activeProject.images.map((image, index) => (
-                  <a
-                    href={image}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    key={image}
-                  >
-                    <img
-                      src={image}
-                      alt={`${activeProject.title} 项目图片 ${index + 1}`}
-                      loading="lazy"
-                    />
-                  </a>
-                ))}
-              </div>
-            )}
-          </article>
-        </div>
-      )}
     </div>
   );
 };

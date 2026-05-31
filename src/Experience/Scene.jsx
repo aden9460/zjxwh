@@ -30,6 +30,7 @@ const Scene = ({
   mousePositionOffset,
   mouseRotationOffset,
   scrollSpeedMultiplier,
+  onProgressChange,
 }) => {
   const cameraScrollCurve = useScrollCurve(
     initialCameraCurve,
@@ -39,6 +40,7 @@ const Scene = ({
 
   const sceneGroupRef = useRef();
   const singleSheetRef = useRef();
+  const lastReportedProgress = useRef(-1);
 
   const shiftWorld = (direction = "forward") => {
     if (!sceneGroupRef.current) return;
@@ -140,6 +142,14 @@ const Scene = ({
     }
 
     scrollProgress.current = newProgress;
+
+    if (
+      onProgressChange &&
+      Math.abs(lastReportedProgress.current - newProgress) > 0.01
+    ) {
+      lastReportedProgress.current = newProgress;
+      onProgressChange(newProgress);
+    }
 
     if (cameraScrollCurve.transitionCurveActive.current) {
       scrollSpeedMultiplier.current = newProgress <= 0.95 ? 6 : 1;

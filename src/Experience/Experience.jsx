@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect } from "react";
 import { Canvas, extend, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, OrbitControls } from "@react-three/drei";
 import Scene from "./Scene";
 import * as THREE from "three/webgpu";
 import normalizeWheel from "normalize-wheel";
 
-const Experience = () => {
+const Experience = ({ onProgressChange }) => {
   const camera = useRef();
   const cameraGroup = useRef();
   const scrollProgress = useRef(0);
@@ -127,6 +127,7 @@ const Experience = () => {
         mousePositionOffset={mousePositionOffset}
         mouseRotationOffset={mouseRotationOffset}
         scrollSpeedMultiplier={scrollSpeedMultiplier}
+        onProgressChange={onProgressChange}
       />
 
       <group ref={cameraGroup}>
