@@ -1,0 +1,55 @@
+main {
+	min-height: 100vh;
+	width: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: relative;
+}
+
+.content {
+	width: 100%;
+	height: 100vh;
+	position: relative;
+	background: transparent;
+
+	&-intro {
+		z-index: 100;
+		height: 200vh;
+	}
+
+	&-main {
+		position: fixed;
+		top: 0;
+		left: 0;
+		min-height: 100vh;
+		height: auto;
+		overflow-y: auto;
+		background: #060606;
+	}
+
+	&-inner {
+		width: 100%;
+		height: 100vh;
+		position: relative;
+	}
+}
+
+.wrap {
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.grid-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+}

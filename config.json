@@ -1,0 +1,45 @@
+{
+	"head": {
+		"title": "郑嘉雯 | 数字媒体与智能传播作品集",
+		"description": "郑嘉雯的个人主页，展示 AI 内容运营、品牌传播、数字文旅、新媒体运营与项目实践。",
+		"favicon": "favicon.ico"
+	},
+	"intro": {
+		"title": "郑嘉雯",
+		"subtitle": "AI 内容运营 · 品牌传播 · 数字文旅",
+		"enter": "进入主页",
+		"supportAuthor": false,
+		"background": true
+	},
+	"main": {
+		"name": "郑嘉雯",
+		"signature": "数字媒体与智能传播硕士 / AI 赋能内容运营",
+		"avatar": {
+			"link": "assets/avatar.jpg",
+			"height": "100",
+			"width": "100"
+		},
+		"ul": {
+			"first": {
+				"href": "#work",
+				"icon": "bokeyuan",
+				"text": "工作项目"
+			},
+			"second": {
+				"href": "#skills",
+				"icon": "xiaolian",
+				"text": "相关技能"
+			},
+			"third": {
+				"href": "mailto:2459871356@qq.com",
+				"icon": "email",
+				"text": "邮箱"
+			},
+			"fourth": {
+				"href": "https://aden9460.github.io/zjxwh/",
+				"icon": "github",
+				"text": "主页"
+			}
+		}
+	}
+}
