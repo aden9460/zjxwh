@@ -4,6 +4,7 @@ import { useKTX2Texture } from "../utils/ktxLoader";
 import { assetUrl } from "../utils/assets";
 import { useFrame } from "@react-three/fiber";
 import { gsap } from "gsap";
+import PaperLabel from "../components/PaperLabel";
 
 import * as THREE from "three";
 
@@ -140,6 +141,18 @@ export default function Model({ scrollProgress, ...props }) {
         position={[-20.599, 4.634, -2.755]}
         rotation={[Math.PI / 2, 0, 0]}
       />
+      <PaperLabel position={[8.9, 4.25, -2.58]} width={3.3} height={1.35}>
+        <div style={{ fontSize: 15, fontWeight: 900 }}>珀莱雅 / 彩棠</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          Beauty KOL Intelligence Agent：自然语言拆解投放需求，辅助达人筛选、视频搜索与多模态内容分析。
+        </div>
+      </PaperLabel>
+      <PaperLabel position={[11.4, 4.12, -2.58]} width={3.1} height={1.25}>
+        <div style={{ fontSize: 15, fontWeight: 900 }}>物产中大云商</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          参与达人筛选、建联和投放数据复盘，通过 SQL 分析曝光、互动与转化表现。
+        </div>
+      </PaperLabel>
       <mesh
         geometry={nodes.Plane118.geometry}
         material={scene_3}

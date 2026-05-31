@@ -10,6 +10,7 @@ import { SHIFT_X_AMOUNT } from "../components/curve";
 import { useFrame } from "@react-three/fiber";
 import { gsap } from "gsap";
 import * as THREE from "three";
+import PaperLabel from "../components/PaperLabel";
 
 export default function Model({ scrollProgress, ...props }) {
   const { nodes, materials } = useGLTF(assetUrl("models/single_sheet.glb"));
@@ -211,6 +212,46 @@ export default function Model({ scrollProgress, ...props }) {
         position={[35.245 - SHIFT_X_AMOUNT + 6.9, -3.42, -2.755]}
         rotation={[Math.PI / 2, 0, 0]}
       />
+      <PaperLabel
+        position={[27.6 - SHIFT_X_AMOUNT, 4.65, -2.5]}
+        width={3.7}
+        height={1.45}
+      >
+        <div style={{ fontSize: 16, fontWeight: 900 }}>在校经历</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          浙江传媒学院数字媒体与智能传播硕士，研究生绩点 3.8，专业前 10%。班级心理委员，负责活动策划与宣传文案。
+        </div>
+      </PaperLabel>
+      <PaperLabel
+        position={[34.4 - SHIFT_X_AMOUNT, 4.65, -2.5]}
+        width={3.7}
+        height={1.45}
+      >
+        <div style={{ fontSize: 16, fontWeight: 900 }}>相关技能</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          KOL 筛选、SQL、Python、Qwen、Claude、Codex、Midjourney、PS、AE、PR、数字人建模与短视频剪辑。
+        </div>
+      </PaperLabel>
+      <PaperLabel
+        position={[27.6 - SHIFT_X_AMOUNT, -3.45, -2.5]}
+        width={3.8}
+        height={1.5}
+      >
+        <div style={{ fontSize: 16, fontWeight: 900 }}>荣誉证书</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          普通话二级甲等、大学英语六级、演出经纪人证书、全国大学生广告艺术大赛策划案三等奖。
+        </div>
+      </PaperLabel>
+      <PaperLabel
+        position={[34.4 - SHIFT_X_AMOUNT, -3.45, -2.5]}
+        width={3.9}
+        height={1.6}
+      >
+        <div style={{ fontSize: 16, fontWeight: 900 }}>期刊成果</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          第一作者《微短剧的共情叙事与文化认同实践》；另参与社交媒体情感分析与文化遗产数字化研究。
+        </div>
+      </PaperLabel>
 
       <group ref={kpopRumiGroupRef}>
         <mesh

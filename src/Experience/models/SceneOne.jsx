@@ -3,6 +3,7 @@ import { useGLTF, useKTX2 } from "@react-three/drei";
 import { useKTX2Texture } from "../utils/ktxLoader";
 import { assetUrl } from "../utils/assets";
 import { useFrame } from "@react-three/fiber";
+import PaperLabel from "../components/PaperLabel";
 import * as THREE from "three";
 
 export default function Model(props) {
@@ -263,6 +264,21 @@ export default function Model(props) {
         material={scene_1_bg}
         position={[-21.188, 0.605, -0.262]}
       />
+      <PaperLabel position={[-9.7, 2.55, -2.58]} width={4.2} height={1.55}>
+        <div style={{ fontSize: 24, fontWeight: 900 }}>郑嘉雯</div>
+        <div style={{ marginTop: 4, fontSize: 13, fontWeight: 800 }}>
+          数字媒体与智能传播硕士
+        </div>
+        <div style={{ marginTop: 6, fontSize: 12 }}>
+          关注 AI Agent、内容运营、品牌传播与数字文旅，将平台数据和内容创意转化为可执行的传播策略。
+        </div>
+      </PaperLabel>
+      <PaperLabel position={[-5.45, 2.85, -2.6]} width={3.45} height={1.5}>
+        <div style={{ fontSize: 16, fontWeight: 900 }}>关于我</div>
+        <div style={{ marginTop: 6, fontSize: 12 }}>
+          美妆达人投放、私域运营、新媒体账号孵化、多模态影像策划与数据分析。
+        </div>
+      </PaperLabel>
       <mesh
         geometry={nodes.not_waterfall.geometry}
         material={not_waterfall}

@@ -3,6 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { useKTX2Texture } from "../utils/ktxLoader";
 import { assetUrl } from "../utils/assets";
 import { useFrame } from "@react-three/fiber";
+import PaperLabel from "../components/PaperLabel";
 
 export default function Model(props) {
   const { nodes, materials } = useGLTF(assetUrl("models/scene_4.glb"));
@@ -137,6 +138,18 @@ export default function Model(props) {
         position={[-20.599, 4.634, -2.755]}
         rotation={[Math.PI / 2, 0, 0]}
       />
+      <PaperLabel position={[16.55, 4.45, -2.58]} width={3.1} height={1.28}>
+        <div style={{ fontSize: 15, fontWeight: 900 }}>快美妆科技</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          私域运营、达人直播跟播、社群维护与粉丝需求登记，提升用户活跃与转化。
+        </div>
+      </PaperLabel>
+      <PaperLabel position={[19.25, 4.78, -2.58]} width={3.35} height={1.35}>
+        <div style={{ fontSize: 15, fontWeight: 900 }}>苏州新晨传媒</div>
+        <div style={{ marginTop: 5, fontSize: 11 }}>
+          小红书亲子旅行/文旅账号从 0 到 1 孵化，30+ 内容，2 个月涨粉 3000。
+        </div>
+      </PaperLabel>
     </group>
   );
 }
