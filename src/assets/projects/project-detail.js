@@ -19,8 +19,8 @@ const projects = {
 			},
 			video: {
 				title: "讲解视频",
-				description: "视频用于补充说明 Agent 的页面结构、核心筛选逻辑和使用流程。当前原视频超过 GitHub 单文件 100MB 限制，页面已预留视频展示位；压缩到 100MB 以下或提供公开视频链接后即可直接接入。",
-				src: ""
+				description: "视频用于补充说明 Agent 的页面结构、核心筛选逻辑和使用流程，帮助观看者快速理解从投放需求输入到达人推荐结果输出的完整操作路径。",
+				src: "proya/agent-demo.mp4"
 			}
 		},
 		images: [
