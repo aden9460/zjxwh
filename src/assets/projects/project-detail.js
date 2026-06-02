@@ -8,6 +8,11 @@ const projects = {
 			"基于真实达人筛选流程搭建 Beauty KOL Intelligence Agent，将自然语言投放需求拆解为产品线、平台、粉丝区间、达人画像与排除项。",
 			"每周输出 20+ 达人推荐清单，累计促成 50+ 达人合作，并跟踪 CTR、CPM、CPE、ROI 等数据辅助优化筛选标准。"
 		],
+		app: {
+			title: "彩棠智能达人筛选 Agent 页面",
+			description: "该页面展示了围绕彩棠达人投放流程设计的智能筛选看板，包含需求拆解、达人画像、筛选条件、推荐结果与数据辅助决策逻辑。",
+			href: "proya/agent-dashboard.html"
+		},
 		images: [
 			"proya/01.png",
 			"proya/02.png",
@@ -127,6 +132,18 @@ project.points.forEach((point) => {
 	item.textContent = point;
 	points.appendChild(item);
 });
+
+const appSection = document.getElementById("project-app-section");
+const appLink = document.getElementById("project-app-link");
+const appFrame = document.getElementById("project-app-frame");
+if (project.app) {
+	document.getElementById("project-app-title").textContent = project.app.title;
+	document.getElementById("project-app-description").textContent = project.app.description;
+	appLink.href = project.app.href;
+	appFrame.src = project.app.href;
+} else {
+	appSection.style.display = "none";
+}
 
 const gallery = document.getElementById("project-gallery");
 (project.images || []).forEach((src) => {

@@ -1,0 +1,2352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>彩棠智能达人筛选 Agent</title>
+  <style>
+    :root {
+      --ink: #172624;
+      --muted: #64716c;
+      --line: #d9e5df;
+      --bg: #f3f7f3;
+      --panel: #fffefd;
+      --red: #2f8b82;
+      --red-soft: #e8f5f1;
+      --jade: #0f766e;
+      --jade-soft: #e3f3ee;
+      --gold: #7d8f72;
+      --gold-soft: #f0f5e8;
+      --blue: #456f79;
+      --blue-soft: #e7f2f4;
+      --porcelain: #dceee8;
+      --gauze: #edf5ef;
+      --shadow: 0 18px 42px rgba(24, 68, 61, .10);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(224, 240, 233, .88), rgba(250, 248, 240, .96)),
+        url("https://images.unsplash.com/photo-1618220252344-8ec99ec624b1?auto=format&fit=crop&w=1800&q=80");
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+    }
+    button, input, textarea, select { font: inherit; }
+    h1, h2, h3, p { margin: 0; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+    }
+
+    .side {
+      background: rgba(248, 251, 246, .94);
+      border-right: 1px solid var(--line);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mark {
+      width: 72px;
+      height: 44px;
+      border-radius: 8px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      place-items: center;
+      color: #173f39;
+      background:
+        linear-gradient(135deg, rgba(238, 248, 242, .96), rgba(197, 226, 216, .92)),
+        linear-gradient(45deg, transparent, rgba(255,255,255,.55));
+      border: 1px solid #b9d8cf;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 10px 24px rgba(24, 68, 61, .10);
+      font-weight: 800;
+      letter-spacing: 0;
+      font-family: Georgia, "Times New Roman", "PingFang SC", serif;
+      line-height: 1;
+    }
+
+    .mark span:first-child {
+      font-size: 18px;
+    }
+
+    .mark span:last-child {
+      color: #55766e;
+      font-family: "Segoe UI", sans-serif;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    h1 { font-size: 19px; line-height: 1.25; }
+    .sub { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.45; }
+    .label { color: #3e3830; font-size: 13px; font-weight: 800; }
+
+    .field { display: grid; gap: 8px; }
+    textarea, input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 172px;
+      resize: vertical;
+      line-height: 1.56;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(47, 139, 130, .14);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      padding: 4px;
+      border-radius: 8px;
+      background: #e7f0ea;
+    }
+
+    .segmented button {
+      border: 0;
+      border-radius: 6px;
+      min-height: 34px;
+      background: transparent;
+      color: #655e55;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .segmented button.active {
+      background: #fff;
+      color: var(--red);
+      box-shadow: 0 1px 4px rgba(24, 68, 61, .12);
+    }
+
+    .checks { display: grid; gap: 8px; }
+    .check {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: #3e3830;
+      font-size: 13px;
+    }
+    .check input { width: 16px; height: 16px; accent-color: var(--red); }
+
+    .primary, .secondary {
+      border-radius: 8px;
+      min-height: 42px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .primary {
+      border: 0;
+      color: #fff;
+      background: linear-gradient(135deg, #1f8c82, #0d5f58);
+      box-shadow: 0 12px 22px rgba(31, 140, 130, .22);
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      color: #3e3830;
+      background: #fff;
+    }
+
+    .bridge-status {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .brand-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.94), rgba(238, 247, 242, .92)),
+        url("https://images.unsplash.com/photo-1618220252344-8ec99ec624b1?auto=format&fit=crop&w=900&q=70");
+      background-size: cover;
+      background-position: center;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .brand-card strong { font-size: 13px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .auto-profile {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .profile-row {
+      display: grid;
+      gap: 5px;
+    }
+
+    .profile-row strong {
+      color: #3e3830;
+      font-size: 12px;
+    }
+
+    .profile-row span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .tag, .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .tag { background: #f8fcf9; color: #365f56; border: 1px solid #cfe3da; }
+    .pill.red { background: var(--red-soft); color: var(--red); }
+    .pill.jade { background: var(--jade-soft); color: var(--jade); }
+    .pill.gold { background: var(--gold-soft); color: var(--gold); }
+    .pill.blue { background: var(--blue-soft); color: var(--blue); }
+    .pill.gray { background: #edf3ef; color: #5a6964; }
+
+    .content {
+      min-width: 0;
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 196px;
+      border-radius: 8px;
+      padding: 20px;
+      color: #fff;
+      background:
+        linear-gradient(90deg, rgba(4, 51, 48, .94) 0%, rgba(18, 92, 82, .72) 45%, rgba(206, 232, 222, .22) 100%),
+        url("https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1800&q=85");
+      background-size: cover;
+      background-position: center 44%;
+      display: grid;
+      align-content: space-between;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(230,255,248,.14), transparent 34%),
+        radial-gradient(circle at 82% 18%, rgba(169,224,207,.34), transparent 28%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: "TIMAGE";
+      position: absolute;
+      right: 22px;
+      bottom: 12px;
+      color: rgba(214,248,235,.24);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(44px, 8vw, 86px);
+      letter-spacing: 0;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h2 {
+      font-size: 30px;
+      line-height: 1.18;
+      max-width: 700px;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 680px;
+      color: rgba(255,255,255,.82);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-top: 8px;
+    }
+
+    .hero .pill {
+      border: 1px solid rgba(220, 255, 245, .46);
+      background: rgba(231, 252, 245, .88);
+      color: #0a514b;
+      box-shadow: 0 8px 22px rgba(5, 43, 39, .18);
+    }
+
+    .hero .pill.red {
+      background: rgba(245, 255, 251, .94);
+      color: #0a514b;
+    }
+
+    .hero .pill.gold {
+      background: rgba(212, 241, 230, .90);
+      color: #17685f;
+    }
+
+    .hero-top, .hero-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step {
+      min-height: 72px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      align-content: center;
+      gap: 6px 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .step .num {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: #163f39;
+      color: #fff;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .step strong { font-size: 13px; align-self: center; }
+    .step span { grid-column: 2; color: var(--muted); font-size: 12px; line-height: 1.35; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+      min-height: 68px;
+      display: grid;
+      align-content: space-between;
+      gap: 8px;
+    }
+
+    .metric .name { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .metric .num { font-size: 23px; font-weight: 900; }
+
+    .toolbar {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: minmax(230px, 1.2fr) repeat(4, minmax(128px, .7fr));
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 410px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: visible;
+    }
+
+    .main-grid .panel:first-child {
+      overflow: hidden;
+    }
+
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th {
+      text-align: left;
+      color: #675f55;
+      background: #f6faf7;
+      height: 42px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 14px;
+      font-size: 12px;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #eee8df;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    tr { cursor: pointer; }
+    tbody tr:hover, tbody tr.selected { background: #edf7f2; }
+
+    .creator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .clip { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .creator strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .score {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--jade-soft);
+      color: var(--jade);
+      font-weight: 900;
+    }
+
+    .detail {
+      position: sticky;
+      top: 18px;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .detail h3 { font-size: 18px; }
+    .profile-img {
+      height: 118px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid var(--line);
+    }
+
+    .bars { display: grid; gap: 10px; }
+    .bar { display: grid; gap: 6px; }
+    .bar-top {
+      display: flex;
+      justify-content: space-between;
+      color: #5b554c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .track {
+      height: 8px;
+      border-radius: 999px;
+      background: #ece6dc;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      width: 50%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2f8b82, #9bb596, #0f766e);
+    }
+
+    .notes { display: grid; gap: 8px; }
+    .note {
+      border-left: 3px solid var(--red);
+      border-radius: 0 8px 8px 0;
+      background: #fbf8f2;
+      padding: 9px 10px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .report {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .video-pool {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .video-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .pool-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mini-btn {
+      min-height: 34px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .video-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .video-cover {
+      width: 72px;
+      aspect-ratio: 3 / 4;
+      border-radius: 8px;
+      background: #f0ede8 center / cover no-repeat;
+      border: 1px solid var(--line);
+    }
+
+    .video-meta {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+    }
+
+    .video-meta strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .video-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .analysis-line {
+      margin-top: 2px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .match-summary {
+      margin-top: 4px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .match-chip {
+      position: relative;
+      border: 1px solid #d8e8e0;
+      background: #f7fbf8;
+      color: #29483b;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: help;
+      overflow: visible;
+    }
+
+    .match-chip::after {
+      content: attr(data-tip);
+      position: absolute;
+      z-index: 20;
+      left: 0;
+      bottom: calc(100% + 8px);
+      width: min(340px, 72vw);
+      white-space: normal;
+      color: #243f37;
+      background: #ffffff;
+      border: 1px solid #cfe3da;
+      border-radius: 8px;
+      box-shadow: 0 16px 34px rgba(22, 63, 56, .18);
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity .16s ease, transform .16s ease;
+    }
+
+    .match-chip:hover::after,
+    .match-chip:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .match-details {
+      margin-top: 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fcf9;
+      padding: 8px 10px;
+    }
+
+    .match-details summary {
+      cursor: pointer;
+      font-weight: 900;
+      color: #3e3830;
+    }
+
+    .match-detail-row {
+      border-top: 1px solid #d9e5df;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .qwen-progress {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #f8fcf9;
+    }
+
+    .qwen-progress.active { display: grid; gap: 8px; }
+
+    .progress-track {
+      height: 8px;
+      border-radius: 999px;
+      background: #d9e5df;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--red);
+      transition: width .25s ease;
+    }
+
+    .qwen-results {
+      display: none;
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    .qwen-results.active { display: grid; }
+
+    .qwen-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .qwen-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .requirement-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .requirement-row {
+      border: 1px solid #d9e5df;
+      border-radius: 8px;
+      padding: 10px;
+      background: #f8fcf9;
+      display: grid;
+      gap: 6px;
+    }
+
+    .requirement-row strong {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .history-card {
+      border: 1px solid #d9e5df;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-head strong { font-size: 13px; }
+
+    .history-list {
+      display: grid;
+      gap: 8px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      border: 1px dashed #d9e5df;
+      border-radius: 8px;
+      padding: 10px;
+      background: #f8fcf9;
+    }
+
+    .history-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fcf9;
+      padding: 9px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .history-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .history-title strong {
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .history-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .history-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+    }
+
+    .history-actions button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 30px;
+      background: #fff;
+      color: #3e3830;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .video-actions {
+      display: grid;
+      gap: 8px;
+      min-width: 108px;
+    }
+
+    .video-actions a {
+      text-align: center;
+      text-decoration: none;
+      color: #3e3830;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 34px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    .report-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .report-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, #fffdf8);
+      padding: 11px 12px;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .report-box h3 {
+      font-size: 13px;
+      color: #0f5f58;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e0eee8;
+    }
+    .report-box p, .report-box li { color: #4d463e; font-size: 12px; line-height: 1.42; }
+    .report-box ul { margin: 0; padding-left: 18px; }
+
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    @media (max-width: 1240px) {
+      .app { grid-template-columns: 1fr; }
+      .side { border-right: 0; border-bottom: 1px solid var(--line); }
+      .workflow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .main-grid { grid-template-columns: 1fr; }
+      .detail { position: static; }
+    }
+
+    @media (max-width: 860px) {
+      .content, .side { padding: 14px; }
+      .hero { min-height: 210px; padding: 18px; }
+      .hero h2 { font-size: 24px; }
+      .metrics, .report-grid { grid-template-columns: 1fr; }
+      .workflow { grid-template-columns: 1fr 1fr; }
+      .step { min-height: 58px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .video-item { grid-template-columns: 70px minmax(0, 1fr); }
+      .video-cover { width: 70px; }
+      .video-actions { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+      th:nth-child(4), td:nth-child(4),
+      th:nth-child(5), td:nth-child(5) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <aside class="side">
+      <div class="brand">
+              <div class="mark"><span>彩棠</span><span>TIMAGE</span></div>
+        <div>
+          <h1>彩棠智能达人筛选 Agent</h1>
+          <p class="sub">主动搜索 · 视觉识人 · 口播判读 · 商业分析</p>
+        </div>
+      </div>
+
+      <section class="brand-card">
+        <strong>品牌基准</strong>
+        <p class="sub">专业彩妆、东方美学、原生感妆面、骨相化妆、化妆师同款。</p>
+        <div class="tags">
+          <span class="tag">中国妆</span>
+          <span class="tag">原生美</span>
+          <span class="tag">修容</span>
+          <span class="tag">底妆</span>
+          <span class="tag">遮瑕</span>
+        </div>
+      </section>
+
+      <section class="field">
+        <div class="label">达人筛选需求</div>
+        <textarea id="prompt">筛选适合彩棠三色修容盘种草的中腰部达人，平台默认抖音和小红书，粉丝量 5-50 万。要求真人出镜，有骨相修容教学能力，能展示素颜或半脸对比，口播逻辑清晰，排除搬运号、剧情号和硬广感过强账号。</textarea>
+      </section>
+
+      <section class="field">
+        <div class="label">目标平台</div>
+        <div class="segmented" aria-label="平台选择">
+          <button class="active" data-platform="all" type="button">双平台</button>
+          <button data-platform="xhs" type="button">小红书</button>
+          <button data-platform="douyin" type="button">抖音</button>
+          <button data-platform="db" type="button">达人库</button>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="field">
+          <div class="label">产品线</div>
+          <input id="product" list="productOptions" value="三色修容盘" placeholder="手动输入，如三色修容盘/妆前乳/新品名" />
+          <datalist id="productOptions">
+            <option value="三色修容盘"></option>
+            <option value="三文鱼遮瑕盘"></option>
+            <option value="妆前乳"></option>
+            <option value="隔离"></option>
+            <option value="粉底液"></option>
+            <option value="气垫"></option>
+            <option value="化妆刷"></option>
+            <option value="修容刷"></option>
+          </datalist>
+        </div>
+        <div class="field">
+          <div class="label">推荐等级</div>
+          <select id="grade">
+            <option value="all">全部</option>
+            <option value="S">S级</option>
+            <option value="A">A级</option>
+            <option value="B">B级</option>
+            <option value="C">C级</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="field">
+          <div class="label">粉丝下限（万）</div>
+          <input id="minFans" type="number" min="0" step="1" value="5" placeholder="如 5" />
+        </div>
+        <div class="field">
+          <div class="label">粉丝上限（万）</div>
+          <input id="maxFans" type="number" min="1" step="1" value="50" placeholder="如 50" />
+        </div>
+      </section>
+
+      <section class="field">
+        <div class="label">Prompt 自动画像分类</div>
+        <div class="auto-profile" id="autoProfile">
+          <div class="profile-row"><strong>长相/妆容</strong><span id="profileVisual">等待解析</span></div>
+          <div class="profile-row"><strong>口播/教学</strong><span id="profileSpeaking">等待解析</span></div>
+          <div class="profile-row"><strong>内容/商业</strong><span id="profileCommercial">等待解析</span></div>
+          <div class="profile-row"><strong>排除项</strong><span id="profileExclude">等待解析</span></div>
+        </div>
+      </section>
+
+      <button class="primary" id="runBtn" type="button">启动自动搜索并生成候选</button>
+      <div class="bridge-status" id="bridgeStatus">后台已接入抖音登录态与视频解析服务。点击后会根据 Prompt 自动搜索相关视频。</div>
+      <input id="qwenKey" type="password" placeholder="粘贴 Qwen API Key 后保存" autocomplete="off">
+      <button class="secondary" id="saveQwenKeyBtn" type="button">保存 Qwen Key</button>
+      <label for="frameCount">Qwen 抽帧数量</label>
+      <select id="frameCount">
+        <option value="3">3 张 · 快速粗筛</option>
+        <option value="6" selected>6 张 · 推荐平衡</option>
+        <option value="9">9 张 · 更细复核</option>
+        <option value="12">12 张 · 最细但更慢</option>
+      </select>
+      <button class="secondary" id="resetBtn" type="button">恢复彩棠默认任务</button>
+
+      <section class="history-card">
+        <div class="history-head">
+          <strong>历史筛选记录</strong>
+          <button class="secondary mini-btn" id="saveHistoryBtn" type="button">保存当前</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </aside>
+
+    <section class="content">
+      <section class="hero">
+        <div class="hero-top">
+          <span class="pill red">彩棠 TIMAGE 品牌专属</span>
+          <span class="pill gold">中国妆 · 原生美 · 余白美学</span>
+        </div>
+        <div>
+          <h2>以彩棠品牌美学筛选真正适配的妆教达人</h2>
+          <p id="querySummary">彩棠三色修容盘 · 双平台搜索 · 5-50 万中腰部达人 · 真人出镜骨相修容教学</p>
+        </div>
+        <div class="hero-bottom">
+          <span class="pill jade">视觉评估：骨相 / 肤质 / 妆容 / 上镜展示力</span>
+          <span class="pill blue">口播评估：教学结构 / 手法表达 / 肤质适配</span>
+        </div>
+      </section>
+
+      <section class="workflow" aria-label="工作流程">
+        <div class="step"><div class="num">1</div><strong>解析需求</strong><span>提取产品、平台、粉丝量、妆容与口播要求。</span></div>
+        <div class="step"><div class="num">2</div><strong>主动搜索</strong><span>按修容、遮瑕、妆前、骨相化妆等关键词扩展候选。</span></div>
+        <div class="step"><div class="num">3</div><strong>达人初筛</strong><span>排除不活跃、搬运、纯图文、剧情型账号。</span></div>
+        <div class="step"><div class="num">4</div><strong>深度分析</strong><span>视觉、口播、历史合作三组模型评分。</span></div>
+        <div class="step"><div class="num">5</div><strong>输出报告</strong><span>生成严格模板的商业推荐结论。</span></div>
+      </section>
+
+      <section class="metrics">
+        <div class="metric"><div class="name">候选达人</div><div class="num" id="resultCount">6</div></div>
+        <div class="metric"><div class="name">平均匹配分</div><div class="num" id="avgScore">88</div></div>
+        <div class="metric"><div class="name">S/A 级达人</div><div class="num" id="topCount">4</div></div>
+        <div class="metric"><div class="name">需规避风险</div><div class="num" id="riskCount">1</div></div>
+      </section>
+
+      <section class="toolbar">
+        <input id="search" placeholder="搜索昵称、骨相、肤质、口播、历史品牌" />
+        <select id="type">
+          <option value="all">全部类型</option>
+          <option value="修容">修容教学</option>
+          <option value="遮瑕">遮瑕测评</option>
+          <option value="底妆">底妆测评</option>
+          <option value="妆前">妆前测评</option>
+        </select>
+        <select id="commercial">
+          <option value="all">全部商业化</option>
+          <option value="纯妆教">纯妆教</option>
+          <option value="轻度种草">轻度种草</option>
+          <option value="成熟带货">成熟带货</option>
+        </select>
+        <select id="sort">
+          <option value="score">综合匹配</option>
+          <option value="visual">视觉评分</option>
+          <option value="speaking">口播评分</option>
+          <option value="fans">粉丝量</option>
+        </select>
+        <select id="limit">
+          <option value="10">最多10位</option>
+          <option value="6">最多6位</option>
+          <option value="3">最多3位</option>
+        </select>
+      </section>
+
+      <section class="panel video-pool">
+        <div class="report-title">
+          <div>
+            <h2>待筛选视频池</h2>
+            <p class="sub">展示本轮搜索命中的原始视频与博主信息，作为达人筛选的来源依据。</p>
+          </div>
+          <div class="pool-actions">
+            <button class="secondary mini-btn" id="analyzeBtn" type="button">Qwen 分析前 10 个</button>
+            <span class="pill gray" id="videoPoolCount">0 条视频</span>
+          </div>
+        </div>
+        <div class="qwen-progress" id="qwenProgress">
+          <div class="progress-track"><div class="progress-fill" id="qwenProgressFill"></div></div>
+          <p class="sub" id="qwenProgressText">等待开始分析</p>
+        </div>
+        <div class="video-list" id="videoPool"></div>
+      </section>
+
+      <section class="main-grid">
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:30%">达人</th>
+                <th style="width:12%">平台</th>
+                <th style="width:12%">粉丝</th>
+                <th style="width:16%">适配产品</th>
+                <th style="width:17%">商业成熟度</th>
+                <th style="width:13%">推荐</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <aside class="panel detail" id="detail"></aside>
+      </section>
+
+      <section class="panel report">
+        <div class="report-title">
+          <div>
+            <h2>结构化推荐报告</h2>
+            <p class="sub">聚合当前选中达人的视觉、口播、风险与合作建议，方便快速复核。</p>
+          </div>
+          <span class="pill gray" id="reportName">当前：棠妆小鱼</span>
+        </div>
+        <div class="report-grid" id="reportGrid"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const creators = [
+      {
+        id: 1,
+        name: "棠妆小鱼",
+        platform: "xhs",
+        platformName: "小红书",
+        homepage: "https://www.xiaohongshu.com/user/example-01",
+        fans: 18.6,
+        likes: "132.4万",
+        grade: "S",
+        score: 94,
+        visual: 93,
+        speaking: 91,
+        product: ["修容", "底妆"],
+        commercial: "轻度种草",
+        avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=240&q=80",
+        cover: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=80",
+        style: "原生感底妆、方圆脸修容、半脸对比清晰",
+        bone: "颧骨微凸、下颌线清楚，适合展示三色修容盘的面中提亮与轮廓收束。",
+        skin: "混合皮，有轻微黑眼圈与鼻翼泛红，能自然展示遮瑕和底妆服帖度。",
+        age: "25岁左右，与彩棠核心人群匹配。",
+        makeup: "清透底妆、低饱和中国妆，符合原生美调性。",
+        display: 9,
+        speakingText: "有稳定口播，会用问题指出、产品选择、手法演示、效果对比结构讲解。",
+        teaching: 9,
+        technique: 9,
+        skinExplain: "能区分干皮控油与滋润版选择，常提到少量多次、点拍和边界晕染。",
+        fluency: 9,
+        frequency: "近30天 11 条彩妆内容",
+        hasMakeup: "是，修容、粉底、遮瑕、妆前",
+        price: "是，历史客单价 89-249 元",
+        domestic: "是，毛戈平、花西子、彩棠相关提及",
+        conclusion: "非常适合修容盘首批种草，可承担手法教育与效果验证。",
+        risks: "需确认是否有同品类竞品排期。",
+        suggestion: "三色修容盘半脸对比 + 面中提亮教程 + 方圆脸通勤妆。"
+      },
+      {
+        id: 2,
+        name: "梨涡底妆课",
+        platform: "douyin",
+        platformName: "抖音",
+        homepage: "https://www.douyin.com/user/example-02",
+        fans: 41.2,
+        likes: "486.8万",
+        grade: "A",
+        score: 89,
+        visual: 87,
+        speaking: 92,
+        product: ["底妆", "妆前"],
+        commercial: "成熟带货",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=80",
+        cover: "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?auto=format&fit=crop&w=900&q=80",
+        style: "油皮持妆测试、镜头怼脸、语速稳定",
+        bone: "面中饱满、鼻梁条件好，适合展示底妆光泽与局部提亮。",
+        skin: "油皮，T区出油明显，适合妆前乳控油版和粉底持妆测试。",
+        age: "28岁左右。",
+        makeup: "干净通勤妆，底妆质感稳定。",
+        display: 8,
+        speakingText: "口播经验成熟，能把肤质痛点和产品卖点串联清楚。",
+        teaching: 8,
+        technique: 8,
+        skinExplain: "经常做持妆8小时测试，干油皮差异讲解较清楚。",
+        fluency: 9,
+        frequency: "近30天 8 条底妆内容",
+        hasMakeup: "是，粉底、妆前、定妆",
+        price: "是，历史客单价 99-399 元",
+        domestic: "是，完美日记、橘朵、毛戈平",
+        conclusion: "适合妆前乳和粉底液转化型内容。",
+        risks: "商业内容比例偏高，脚本要弱化硬广感。",
+        suggestion: "油皮妆前乳半天通勤测试 + 粉底叠加不搓泥验证。"
+      },
+      {
+        id: 3,
+        name: "阿照修容手记",
+        platform: "dual",
+        platformName: "双平台",
+        homepage: "https://example.com/creator-03",
+        fans: 12.4,
+        likes: "95.1万",
+        grade: "S",
+        score: 92,
+        visual: 95,
+        speaking: 86,
+        product: ["修容", "遮瑕"],
+        commercial: "纯妆教",
+        avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=240&q=80",
+        cover: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=900&q=80",
+        style: "高颧骨、骨相修饰、化妆刷手法特写",
+        bone: "高颧骨、面中略平，修容前后差异明显，示范价值强。",
+        skin: "中性皮，有泪沟和轻微黑眼圈，适合三文鱼遮瑕盘联动。",
+        age: "24岁左右。",
+        makeup: "东方淡颜、原生感强，符合中国妆表达。",
+        display: 10,
+        speakingText: "以字幕和画外音为主，真人口播较少，但手法画面非常清楚。",
+        teaching: 8,
+        technique: 10,
+        skinExplain: "手法细节强，肤质解释一般。",
+        fluency: 8,
+        frequency: "近30天 9 条修容/遮瑕内容",
+        hasMakeup: "是，修容、遮瑕、化妆刷",
+        price: "是，历史客单价 59-199 元",
+        domestic: "是，毛戈平、彩棠、花西子",
+        conclusion: "适合做专业手法教育内容，尤其适配修容盘。",
+        risks: "真人口播存在感弱，需提前约定口播版本。",
+        suggestion: "高颧骨修容教程 + 刷具手法特写 + 素颜到成妆。"
+      },
+      {
+        id: 4,
+        name: "软桃遮瑕日记",
+        platform: "xhs",
+        platformName: "小红书",
+        homepage: "https://www.xiaohongshu.com/user/example-04",
+        fans: 7.8,
+        likes: "54.6万",
+        grade: "A",
+        score: 86,
+        visual: 88,
+        speaking: 84,
+        product: ["遮瑕", "底妆"],
+        commercial: "轻度种草",
+        avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=240&q=80",
+        cover: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80",
+        style: "黑眼圈遮瑕、瑕疵皮真实展示、图文+视频混合",
+        bone: "骨相条件普通，但脸型亲和，适合大众化遮瑕场景。",
+        skin: "黑眼圈明显，偶有痘印和泛红，适合展示遮瑕盘真实效果。",
+        age: "22岁左右。",
+        makeup: "轻遮瑕、自然通勤妆。",
+        display: 8,
+        speakingText: "有画外音讲解，真人出镜偶尔出现。",
+        teaching: 8,
+        technique: 8,
+        skinExplain: "能说明校色、遮瑕顺序和粉扑按压方式。",
+        fluency: 8,
+        frequency: "近30天 6 条遮瑕内容",
+        hasMakeup: "是，遮瑕、粉底、定妆",
+        price: "是，历史客单价 49-179 元",
+        domestic: "是，橘朵、blankme、彩棠提及",
+        conclusion: "适合三文鱼遮瑕盘真实瑕疵皮种草。",
+        risks: "粉丝量偏小，单篇爆发不稳定。",
+        suggestion: "黑眼圈校色遮瑕 + 通勤8小时不卡纹测试。"
+      },
+      {
+        id: 5,
+        name: "南风妆前测评",
+        platform: "douyin",
+        platformName: "抖音",
+        homepage: "https://www.douyin.com/user/example-05",
+        fans: 66.5,
+        likes: "702.2万",
+        grade: "B",
+        score: 78,
+        visual: 80,
+        speaking: 83,
+        product: ["妆前", "底妆"],
+        commercial: "成熟带货",
+        avatar: "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?auto=format&fit=crop&w=240&q=80",
+        cover: "https://images.unsplash.com/photo-1500336624523-d727130c3328?auto=format&fit=crop&w=900&q=80",
+        style: "快节奏测评、强转化话术、直播切片较多",
+        bone: "骨相立体，适合底妆光泽展示，但修容教育感一般。",
+        skin: "干皮，脸颊起皮场景明显，适合滋润版妆前乳。",
+        age: "30岁左右。",
+        makeup: "妆感偏精致，原生感略弱。",
+        display: 7,
+        speakingText: "口播熟练，但带货话术偏强。",
+        teaching: 7,
+        technique: 7,
+        skinExplain: "肤质适配会讲，但偏结果导向。",
+        fluency: 9,
+        frequency: "近30天 12 条美妆商业内容",
+        hasMakeup: "是，妆前、粉底、定妆喷雾",
+        price: "是，历史客单价 99-299 元",
+        domestic: "是，花西子、完美日记",
+        conclusion: "适合投流素材测试，不适合品牌首批口碑内容。",
+        risks: "硬广感较强，可能削弱彩棠专业口碑。",
+        suggestion: "妆前乳干皮卡粉救急，但需严格控制脚本。"
+      },
+      {
+        id: 6,
+        name: "好物快剪局",
+        platform: "douyin",
+        platformName: "抖音",
+        homepage: "https://www.douyin.com/user/example-06",
+        fans: 22.1,
+        likes: "164.0万",
+        grade: "C",
+        score: 59,
+        visual: 45,
+        speaking: 40,
+        product: ["底妆"],
+        commercial: "成熟带货",
+        avatar: "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=240&q=80",
+        cover: "https://images.unsplash.com/photo-1526045478516-99145907023c?auto=format&fit=crop&w=900&q=80",
+        style: "素材混剪、品牌图堆叠、真人展示弱",
+        bone: "无法稳定识别真人骨相，封面多为产品图和混剪画面。",
+        skin: "无清晰肤质展示，不适合底妆/遮瑕效果验证。",
+        age: "无法判断。",
+        makeup: "缺少真实妆容表达。",
+        display: 3,
+        speakingText: "多为机械配音和字幕卖点堆叠。",
+        teaching: 3,
+        technique: 2,
+        skinExplain: "几乎没有肤质适配讲解。",
+        fluency: 4,
+        frequency: "近30天 20 条好物混剪",
+        hasMakeup: "是，但以素材混剪为主",
+        price: "不稳定",
+        domestic: "是，多品牌合集",
+        conclusion: "不建议进入彩棠合作名单。",
+        risks: "疑似搬运混剪，原创度和信任感不足。",
+        suggestion: "跳过该达人，避免影响品牌专业感。"
+      }
+    ];
+
+    let externalCreators = null;
+    let rawVideoPool = [];
+    const state = { platform: "all", selectedId: 1, currentHistoryId: null };
+    const el = (id) => document.getElementById(id);
+    const HISTORY_KEY = "ct_kol_filter_history_v1";
+    const LAST_WORKSPACE_KEY = "ct_kol_filter_last_workspace_v1";
+    const HISTORY_LIMIT = 10;
+    let lastWorkspaceTimer = null;
+
+    function formatFans(num) {
+      const value = Number(num || 0);
+      return Number.isFinite(value) && value > 0 ? `${value.toFixed(1)}万` : "待识别";
+    }
+
+    function gradeClass(grade) {
+      if (grade === "S") return "red";
+      if (grade === "A") return "jade";
+      if (grade === "B") return "blue";
+      return "gold";
+    }
+
+    function normalizeProduct(value) {
+      const text = `${value || ""} ${el("prompt").value || ""}`;
+      if (text.includes("修容") || text.includes("高光") || text.includes("骨相")) return "修容";
+      if (text.includes("遮瑕") || text.includes("三文鱼") || text.includes("黑眼圈") || text.includes("痘印")) return "遮瑕";
+      if (text.includes("妆前") || text.includes("隔离") || text.includes("控油") || text.includes("滋润")) return "妆前";
+      if (text.includes("粉底") || text.includes("气垫") || text.includes("底妆")) return "底妆";
+      return "custom";
+    }
+
+    function parseNumberInput(id, fallback) {
+      const value = Number(el(id).value);
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function activeCreators() {
+      return externalCreators && externalCreators.length ? externalCreators : creators;
+    }
+
+    function wanFromCount(value) {
+      const count = Number(value || 0);
+      if (!Number.isFinite(count) || count <= 0) return 0;
+      return count > 10000 ? count / 10000 : count;
+    }
+
+    function parseCountValue(value) {
+      if (value === null || value === undefined) return 0;
+      if (typeof value === "number") return Number.isFinite(value) && value > 0 ? value : 0;
+      const text = String(value).trim().replace(/,/g, "");
+      if (!text) return 0;
+      const match = text.match(/\d+(?:\.\d+)?/);
+      if (!match) return 0;
+      let multiplier = 1;
+      if (text.includes("亿")) multiplier = 100000000;
+      else if (text.includes("万") || text.toLowerCase().endsWith("w")) multiplier = 10000;
+      const num = Number(match[0]) * multiplier;
+      return Number.isFinite(num) && num > 0 ? num : 0;
+    }
+
+    function firstPositiveNumber(...values) {
+      for (const value of values) {
+        const num = parseCountValue(value);
+        if (num > 0) return num;
+      }
+      return 0;
+    }
+
+    function candidateFansCount(item) {
+      const direct = firstPositiveNumber(
+        item.fansCount,
+        item.follower_count,
+        item.followerCount,
+        item.followers,
+        item.fans_count,
+        item.mplatform_followers_count,
+        item.author?.follower_count,
+        item.author?.followerCount,
+        item.author?.followers,
+        item.author?.fans_count,
+        item.author?.mplatform_followers_count,
+        item.author?.author_stats?.follower_count,
+        item.author?.stats?.follower_count,
+        item.user?.follower_count,
+        item.user?.followerCount,
+        item.user_info?.follower_count,
+        item.author_user_info?.follower_count
+      );
+      if (direct) return direct;
+
+      const keys = new Set(["fansCount", "follower_count", "followerCount", "followers", "fans_count", "mplatform_followers_count", "total_follower_count"]);
+      const stack = [item];
+      const seen = new Set();
+      while (stack.length) {
+        const node = stack.pop();
+        if (!node || typeof node !== "object" || seen.has(node)) continue;
+        seen.add(node);
+        if (Array.isArray(node)) {
+          node.forEach((child) => stack.push(child));
+          continue;
+        }
+        for (const [key, value] of Object.entries(node)) {
+          if (keys.has(key) || (/follower/i.test(key) && /count/i.test(key))) {
+            const num = parseCountValue(value);
+            if (num > 0) return num;
+          }
+          if (value && typeof value === "object") stack.push(value);
+        }
+      }
+      return 0;
+    }
+
+    function promptExcludesMale() {
+      const text = el("prompt").value || "";
+      return /(?:不要|排除|不接受|拒绝|规避|避开|过滤)[^，。；;,.]{0,12}(?:男|男性|男生|男博主|男达人|男的)|(?:只要|仅要|限|限定|优先)[^，。；;,.]{0,12}(?:女|女性|女生|女博主|女达人|女的)/.test(text);
+    }
+
+    function candidateTextBlob(item) {
+      const parts = [];
+      const stack = [item];
+      const seen = new Set();
+      while (stack.length) {
+        const node = stack.pop();
+        if (node === null || node === undefined || seen.has(node)) continue;
+        if (typeof node === "string" || typeof node === "number") {
+          parts.push(String(node));
+          continue;
+        }
+        if (typeof node !== "object") continue;
+        seen.add(node);
+        if (Array.isArray(node)) {
+          node.forEach((child) => stack.push(child));
+          continue;
+        }
+        Object.values(node).forEach((value) => stack.push(value));
+      }
+      return parts.join(" ");
+    }
+
+    function isProbablyMaleCandidate(item) {
+      const text = candidateTextBlob(item);
+      const strongSignals = [
+        "男博主", "男达人", "男性博主", "男性达人", "男美妆", "男生美妆", "男生护肤",
+        "男士彩妆", "男士底妆", "男士修容", "男士遮瑕", "男生修容", "男生遮瑕",
+        "直男", "小哥哥", "帅哥", "男友", "男朋友", "老公", "boy", "male beauty", "men makeup", "men's makeup"
+      ];
+      if (strongSignals.some((word) => text.toLowerCase().includes(word.toLowerCase()))) return true;
+      return /(?:^|[^\u4e00-\u9fa5])(?:男|male|man)(?:$|[^\u4e00-\u9fa5])/.test(text.toLowerCase());
+    }
+
+    function filterCandidatesByPrompt(items) {
+      const list = Array.isArray(items) ? items : [];
+      if (!promptExcludesMale()) return list;
+      return list.filter((item) => !isProbablyMaleCandidate(item));
+    }
+
+    function normalizeCreatorProductTags(creator) {
+      const product = normalizeProduct(el("product").value);
+      const fallback = product === "custom" ? (el("product").value.trim() || "自定义产品线") : product;
+      const tags = Array.isArray(creator.product) ? creator.product.filter(Boolean) : [];
+      const hasKnownTag = tags.some((tag) => ["修容", "遮瑕", "妆前", "底妆"].includes(tag));
+      return {
+        ...creator,
+        product: hasKnownTag ? tags : [fallback],
+        productFit: hasKnownTag ? creator.productFit : (tags.join(" / ") || creator.productFit || "")
+      };
+    }
+
+    function creatorDedupeKey(item) {
+      const author = item.author || {};
+      const key = item.userId || item.user_id || author.uid || author.sec_uid || item.homepageUrl || item.homepage || item.name || item.nickname || author.nickname || item.avatar || author.avatar || "";
+      return String(key).trim().toLowerCase();
+    }
+
+    function dedupeByCreator(items) {
+      const best = new Map();
+      (items || []).forEach((item) => {
+        const key = creatorDedupeKey(item);
+        if (!key) return;
+        const existing = best.get(key);
+        const existingScore = Number(existing?.score || 0);
+        const score = Number(item.score || 0);
+        const existingFans = Number(existing?.fans || 0);
+        const fans = Number(item.fans || 0);
+        if (!existing || score > existingScore || (score === existingScore && fans > existingFans)) {
+          best.set(key, item);
+        }
+      });
+      return Array.from(best.values()).map((item, index) => ({ ...item, id: 1000 + index }));
+    }
+
+    function convertSearchCandidate(item, index) {
+      const product = normalizeProduct(el("product").value);
+      const productMap = {
+        custom: [el("product").value.trim() || "自定义产品线"],
+        "修容": ["修容"],
+        "遮瑕": ["遮瑕"],
+        "妆前": ["妆前"],
+        "底妆": ["底妆"]
+      };
+      const title = item.title || item.desc || "搜索结果待分析";
+      const fans = wanFromCount(candidateFansCount(item));
+      const visual = title.includes("修容") || title.includes("妆") ? 78 : 70;
+      const speaking = title.includes("教程") || title.includes("口播") || title.includes("测评") ? 76 : 66;
+      const score = Math.min(92, Math.round((visual + speaking) / 2 + (fans >= 5 && fans <= 50 ? 8 : 0)));
+      const grade = score >= 90 ? "S" : score >= 82 ? "A" : score >= 70 ? "B" : "C";
+      return {
+        id: 1000 + index,
+        name: item.nickname || item.author?.nickname || "未知达人",
+        platform: item.platform === "xhs" ? "xhs" : "douyin",
+        platformName: item.platformName || "抖音",
+        homepage: item.homepageUrl || item.resolved_url || item.source_url || "",
+        fans: fans || wanFromCount(candidateFansCount(item)),
+        likes: String(item.totalLikes || item.likedCount || item.stats?.digg_count || 0),
+        grade,
+        score,
+        visual,
+        speaking,
+        product: productMap[product] || [el("product").value.trim() || "自定义产品线"],
+        commercial: "待深度分析",
+        userId: item.userId || item.author?.uid || item.author?.sec_uid || item.user_id || "",
+        avatar: item.avatar || item.author?.avatar || "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=240&q=80",
+        cover: item.cover || item.avatar || item.author?.avatar || "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=80",
+        style: title,
+        downloadUrl: item.download_url || item.downloadUrl || "",
+        videoId: item.video_id || item.videoId || "",
+        bone: "已从平台搜索命中候选，骨相条件需要调用视觉模型读取头像与视频关键帧后确认。",
+        skin: "肤质底子需要读取视频封面、关键帧或笔记图片后确认。",
+        age: "待视觉模型判断。",
+        makeup: "待视觉模型判断是否符合中国妆、原生感、精致底妆调性。",
+        display: 6,
+        speakingText: "待提取字幕/语音后判断是否有口播、教学结构和手法讲解。",
+        teaching: 6,
+        technique: 6,
+        skinExplain: "待字幕分析。",
+        fluency: 6,
+        frequency: "待读取近30天作品后统计。",
+        hasMakeup: "待识别标题、画面、品牌露出与历史作品。",
+        price: "待历史合作识别。",
+        domestic: "待历史合作识别。",
+        conclusion: item.download_url ? "已解析到抖音视频信息和无水印下载链接，下一步可做关键帧、字幕与历史合作分析。" : "已进入候选池，下一步需要视觉识别、字幕提取和历史合作分析。",
+        risks: "搜索命中结果尚未完成深度校验，需排除搬运、剧情、硬广账号。",
+        suggestion: item.download_url ? "先对该视频做关键帧抽取和语音文案提取，再扩展读取作者主页近3条内容。" : "先拉取该达人最近3条内容，再生成完整推荐报告。"
+      };
+    }
+
+    function applyQwenAnalysisToCreator(creator, analysis) {
+      if (!analysis) return creator;
+      return {
+        ...creator,
+        grade: analysis.grade || creator.grade,
+        score: Number(analysis.score || creator.score),
+        visual: Number(analysis.visual || creator.visual),
+        speaking: Number(analysis.speaking || creator.speaking),
+        commercial: typeof analysis.commercial === "string" && analysis.commercial.trim() ? analysis.commercial : creator.commercial,
+        product: creator.product,
+        productFit: typeof analysis.productFit === "string" && analysis.productFit.trim() ? analysis.productFit : creator.productFit,
+        bone: analysis.bone || creator.bone,
+        skin: analysis.skin || creator.skin,
+        age: analysis.age || creator.age,
+        makeup: analysis.makeup || creator.makeup,
+        display: Number(analysis.display || creator.display),
+        speakingText: analysis.speakingText || creator.speakingText,
+        teaching: Number(analysis.teaching || creator.teaching),
+        technique: Number(analysis.technique || creator.technique),
+        skinExplain: analysis.skinExplain || creator.skinExplain,
+        fluency: Number(analysis.fluency || creator.fluency),
+        frequency: analysis.frequency || creator.frequency,
+        hasMakeup: analysis.hasMakeup || creator.hasMakeup,
+        price: analysis.price || creator.price,
+        domestic: analysis.domestic || creator.domestic,
+        conclusion: analysis.conclusion || creator.conclusion,
+        risks: analysis.risks || creator.risks,
+        suggestion: analysis.suggestion || creator.suggestion,
+        requirementMatches: analysis.requirementMatches || creator.requirementMatches || [],
+        qwenAnalysis: analysis
+      };
+    }
+
+    function mergeQwenAnalyses(analyses) {
+      const byVideo = new Map((analyses || []).map((item) => [String(item.video_id || ""), item]));
+      rawVideoPool = rawVideoPool.map((item) => {
+        const videoId = String(item.video_id || item.videoId || "");
+        const analysis = byVideo.get(videoId);
+        return analysis ? { ...item, qwenAnalysis: analysis } : item;
+      });
+      externalCreators = (externalCreators || []).map((creator) => {
+        const analysis = byVideo.get(String(creator.videoId || ""));
+        return applyQwenAnalysisToCreator(creator, analysis);
+      });
+    }
+
+    function markQwenError(videoId, message) {
+      rawVideoPool = rawVideoPool.map((item) => {
+        const currentId = String(item.video_id || item.videoId || "");
+        return currentId === String(videoId || "") ? { ...item, qwenError: message } : item;
+      });
+    }
+
+    function setQwenProgress(done, total, current, failed = 0) {
+      const percent = total ? Math.round((done / total) * 100) : 0;
+      el("qwenProgress").classList.add("active");
+      el("qwenProgressFill").style.width = `${percent}%`;
+      el("qwenProgressText").textContent = current
+        ? `正在分析：${current} · ${done}/${total} 已完成 · 失败 ${failed}`
+        : `Qwen 分析进度：${done}/${total} 已完成 · 失败 ${failed}`;
+    }
+
+    function resetQwenProgress() {
+      el("qwenProgressFill").style.width = "0%";
+      el("qwenProgressText").textContent = "等待开始分析";
+      el("qwenProgress").classList.remove("active");
+    }
+
+    function readHistory() {
+      try {
+        const value = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        return Array.isArray(value) ? value : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function writeHistory(items) {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, HISTORY_LIMIT)));
+    }
+
+    function saveLastWorkspace(note = "自动保存") {
+      try {
+        localStorage.setItem(LAST_WORKSPACE_KEY, JSON.stringify(historySnapshot(note)));
+      } catch {
+        // 本地空间不足时，不影响主流程。
+      }
+    }
+
+    function scheduleLastWorkspaceSave(note = "自动保存") {
+      clearTimeout(lastWorkspaceTimer);
+      lastWorkspaceTimer = setTimeout(() => saveLastWorkspace(note), 250);
+    }
+
+    function compactText(text, max = 34) {
+      const value = String(text || "").replace(/\s+/g, " ").trim();
+      return value.length > max ? `${value.slice(0, max)}...` : value;
+    }
+
+    function historySnapshot(note = "手动保存") {
+      const product = el("product").value.trim() || "自定义产品线";
+      const prompt = el("prompt").value.trim();
+      const pool = dedupeByCreator(rawVideoPool).slice(0, 10);
+      const poolCreators = externalCreators && externalCreators.length ? externalCreators.slice(0, 10) : currentList();
+      return {
+        id: state.currentHistoryId || `history-${Date.now()}`,
+        savedAt: new Date().toISOString(),
+        note,
+        title: `${product} · ${compactText(prompt || "未填写需求", 22)}`,
+        form: {
+          prompt,
+          product,
+          platform: state.platform,
+          minFans: el("minFans").value,
+          maxFans: el("maxFans").value,
+          grade: el("grade").value,
+          type: el("type").value,
+          commercial: el("commercial").value,
+          sort: el("sort").value,
+          limit: el("limit").value,
+          frameCount: el("frameCount").value,
+          search: el("search").value
+        },
+        externalCreators: poolCreators,
+        rawVideoPool: pool,
+        counts: {
+          creators: poolCreators.length,
+          videos: pool.length,
+          analyzed: pool.filter((item) => item.qwenAnalysis).length
+        }
+      };
+    }
+
+    function saveCurrentHistory(note = "手动保存", silent = false) {
+      const snapshot = historySnapshot(note);
+      let items = readHistory();
+      const existingIndex = items.findIndex((item) => item.id === snapshot.id);
+      if (existingIndex >= 0) {
+        items[existingIndex] = snapshot;
+      } else {
+        items.unshift(snapshot);
+      }
+      items = items.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt)).slice(0, HISTORY_LIMIT);
+      try {
+        writeHistory(items);
+        state.currentHistoryId = snapshot.id;
+        renderHistory();
+        if (!silent) el("bridgeStatus").textContent = "已保存当前筛选需求和待筛选视频池。";
+        saveLastWorkspace(note);
+      } catch (err) {
+        el("bridgeStatus").textContent = `历史保存失败：浏览器本地空间不足或不可写。${err.message}`;
+      }
+    }
+
+    function applySnapshot(item, statusText) {
+      if (!item) return;
+      const form = item.form || {};
+      el("prompt").value = form.prompt || "";
+      el("product").value = form.product || "";
+      el("minFans").value = form.minFans || "0";
+      el("maxFans").value = form.maxFans || "999";
+      el("grade").value = form.grade || "all";
+      el("type").value = form.type || "all";
+      el("commercial").value = form.commercial || "all";
+      el("sort").value = form.sort || "score";
+      el("limit").value = form.limit || "10";
+      el("frameCount").value = form.frameCount || "6";
+      el("search").value = form.search || "";
+      state.platform = form.platform || "all";
+      state.currentHistoryId = item.id;
+      document.querySelectorAll("[data-platform]").forEach((node) => node.classList.toggle("active", node.dataset.platform === state.platform));
+      externalCreators = item.externalCreators && item.externalCreators.length ? dedupeByCreator(item.externalCreators.map(normalizeCreatorProductTags)) : null;
+      rawVideoPool = dedupeByCreator(item.rawVideoPool || []);
+      state.selectedId = externalCreators?.[0]?.id || 1;
+      resetQwenProgress();
+      el("bridgeStatus").textContent = statusText || `已恢复历史记录：${item.title}`;
+      render();
+    }
+
+    function restoreHistory(id) {
+      const item = readHistory().find((record) => record.id === id);
+      applySnapshot(item, item ? `已恢复历史记录：${item.title}` : "");
+    }
+
+    function restoreLastWorkspace() {
+      try {
+        const item = JSON.parse(localStorage.getItem(LAST_WORKSPACE_KEY) || "null");
+        if (!item || !item.form) return false;
+        applySnapshot(item, `已恢复上次打开时的显示结果：${item.title || "未命名筛选"}`);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function deleteHistory(id) {
+      writeHistory(readHistory().filter((item) => item.id !== id));
+      if (state.currentHistoryId === id) state.currentHistoryId = null;
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = readHistory();
+      if (!el("historyList")) return;
+      if (!list.length) {
+        el("historyList").innerHTML = `<div class="history-empty">暂无历史。搜索成功或点击“保存当前”后，会保留本次需求与筛选池。</div>`;
+        return;
+      }
+      el("historyList").innerHTML = list.map((item) => {
+        const date = new Date(item.savedAt);
+        const time = Number.isNaN(date.getTime()) ? "未知时间" : date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+        const counts = item.counts || {};
+        return `
+          <article class="history-item">
+            <div class="history-title">
+              <strong>${item.title || "未命名筛选"}</strong>
+              <span class="pill gray">${time}</span>
+            </div>
+            <div class="history-meta">${item.note || "历史记录"} · ${counts.creators || 0} 位达人 · ${counts.videos || 0} 条视频 · ${counts.analyzed || 0} 条已分析</div>
+            <div class="history-actions">
+              <button type="button" data-history-load="${item.id}">恢复</button>
+              <button type="button" data-history-delete="${item.id}">删除</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+      el("historyList").querySelectorAll("[data-history-load]").forEach((btn) => {
+        btn.addEventListener("click", () => restoreHistory(btn.dataset.historyLoad));
+      });
+      el("historyList").querySelectorAll("[data-history-delete]").forEach((btn) => {
+        btn.addEventListener("click", () => deleteHistory(btn.dataset.historyDelete));
+      });
+    }
+
+    function pickTerms(text, groups, fallback) {
+      const hits = [];
+      groups.forEach(([label, words]) => {
+        if (words.some((word) => text.includes(word))) hits.push(label);
+      });
+      return hits.length ? hits.join("、") : fallback;
+    }
+
+    function extractExcludeTerms(text) {
+      const value = text || "";
+      const known = [
+        ["搬运号", ["搬运", "盗视频", "混剪号"]],
+        ["剧情号", ["剧情", "短剧", "段子"]],
+        ["硬广感强", ["硬广", "强转化", "叫卖", "直播切片"]],
+        ["纯图文/无真人", ["纯图文", "不出镜", "无真人", "不露脸"]],
+        ["男性达人", ["不要男", "排除男", "男博主", "男达人", "男的", "只要女", "女博主", "女性达人"]],
+        ["网红妆", ["网红妆", "浓妆", "假面感", "科技脸"]],
+        ["画面杂乱", ["画面乱", "背景乱", "杂乱"]],
+        ["粉丝超限", ["粉丝高于", "粉丝超过", "超过50万", "高于50万"]],
+      ];
+      const hits = [];
+      known.forEach(([label, words]) => {
+        if (words.some((word) => value.includes(word))) hits.push(label);
+      });
+      const clauseMatches = value.match(/(?:排除|不要|不接受|避免|拒绝|规避)[^，。；;,.]{1,40}/g) || [];
+      clauseMatches.forEach((clause) => {
+        const cleaned = clause.replace(/^(排除|不要|不接受|避免|拒绝|规避)/, "").trim();
+        if (cleaned) hits.push(cleaned);
+      });
+      return Array.from(new Set(hits));
+    }
+
+    function updateAutoProfile() {
+      const text = el("prompt").value;
+      el("profileVisual").textContent = pickTerms(text, [
+        ["骨相修容", ["骨相", "颧骨", "下颌线", "面中", "高光", "阴影"]],
+        ["真实肤质展示", ["瑕疵", "黑眼圈", "痘印", "泛红", "素颜", "半脸"]],
+        ["原生感中国妆", ["中国妆", "原生", "清透", "东方", "精致妆容"]],
+        ["特定五官/脸型", ["单眼皮", "肿眼泡", "方圆脸", "丹凤眼", "高颧骨"]]
+      ], "未指定，等待从 Prompt 中提取");
+      el("profileSpeaking").textContent = pickTerms(text, [
+        ["真人出镜口播", ["真人出镜", "口播", "面对镜头"]],
+        ["画外音可接受", ["画外音", "配音"]],
+        ["手法特写清晰", ["手法", "特写", "点拍", "拖拽", "按压", "少量多次"]],
+        ["教学结构完整", ["教程", "教学", "问题", "效果对比", "讲解"]]
+      ], "未指定，等待从 Prompt 中提取");
+      el("profileCommercial").textContent = pickTerms(text, [
+        ["中腰部达人", ["中腰", "腰部", "5-50", "5 到 50"]],
+        ["轻度种草", ["轻度种草", "真实种草", "测评"]],
+        ["成熟带货", ["带货", "转化", "直播"]],
+        ["彩妆/底妆历史合作", ["历史合作", "彩妆", "底妆", "国货"]]
+      ], "未指定，等待从 Prompt 中提取");
+      const excludes = extractExcludeTerms(text);
+      el("profileExclude").textContent = excludes.length ? excludes.join("、") : "未指定排除项";
+    }
+
+    function currentList() {
+      const keyword = el("search").value.trim().toLowerCase();
+      const product = normalizeProduct(el("product").value);
+      const type = el("type").value;
+      const grade = el("grade").value;
+      const commercial = el("commercial").value;
+      const minFans = parseNumberInput("minFans", 0);
+      const maxFans = parseNumberInput("maxFans", 999);
+      const sort = el("sort").value;
+      const limit = Number(el("limit").value);
+
+      return activeCreators().filter((item) => {
+        if (promptExcludesMale() && isProbablyMaleCandidate(item)) return false;
+        const platformMatch = state.platform === "all" || item.platform === state.platform;
+        const productTags = Array.isArray(item.product) ? item.product : [];
+        const productMatch = product === "custom" || productTags.includes(product) || String(item.productFit || "").includes(product);
+        const typeMatch = type === "all" || productTags.includes(type) || String(item.productFit || "").includes(type);
+        const gradeMatch = grade === "all" || item.grade === grade;
+        const commercialMatch = commercial === "all" || item.commercial === commercial;
+        const fansMatch = !item.fans || (item.fans >= minFans && item.fans <= maxFans);
+        const blob = Object.values(item).join(" ").toLowerCase();
+        const keywordMatch = !keyword || blob.includes(keyword);
+        return platformMatch && productMatch && typeMatch && gradeMatch && commercialMatch && fansMatch && keywordMatch;
+      }).reduce((rows, item) => dedupeByCreator([...rows, item]), []).sort((a, b) => b[sort] - a[sort]).slice(0, limit);
+    }
+
+    function updateSummary() {
+      const product = el("product").value.trim() || "自定义产品线";
+      const minFans = el("minFans").value || "不限";
+      const maxFans = el("maxFans").value || "不限";
+      const platform = state.platform === "xhs" ? "小红书" : state.platform === "douyin" ? "抖音" : state.platform === "db" ? "达人库" : "双平台";
+      el("querySummary").textContent = `彩棠${product} · ${platform}搜索 · ${minFans}-${maxFans} 万达人 · 视觉/口播/历史合作综合分析`;
+      updateAutoProfile();
+    }
+
+    function renderTable() {
+      const list = currentList();
+      if (!list.some((item) => item.id === state.selectedId) && list[0]) state.selectedId = list[0].id;
+      el("tbody").innerHTML = list.map((item) => `
+        <tr class="${item.id === state.selectedId ? "selected" : ""}" data-id="${item.id}">
+          <td>
+            <div class="creator">
+              <div class="avatar" style="background-image:url('${item.avatar}')"></div>
+              <div class="clip">
+                <strong>${item.name}</strong>
+                <span class="sub">${item.style}</span>
+              </div>
+            </div>
+          </td>
+          <td>${item.platformName}</td>
+          <td>${formatFans(item.fans)}</td>
+          <td><span class="clip">${item.product.join(" / ")}</span></td>
+          <td>${item.commercial}</td>
+          <td><span class="score">${item.grade}${item.score}</span></td>
+        </tr>
+      `).join("");
+
+      el("tbody").querySelectorAll("tr").forEach((row) => {
+        row.addEventListener("click", () => {
+          state.selectedId = Number(row.dataset.id);
+          render();
+        });
+      });
+
+      updateMetrics(list);
+      renderDetail(list);
+      renderReport(list);
+    }
+
+    function updateMetrics(list) {
+      const avg = list.length ? Math.round(list.reduce((sum, item) => sum + item.score, 0) / list.length) : 0;
+      const excludes = extractExcludeTerms(el("prompt").value);
+      el("resultCount").textContent = list.length;
+      el("avgScore").textContent = avg;
+      el("topCount").textContent = list.filter((item) => ["S", "A"].includes(item.grade)).length;
+      el("riskCount").textContent = list.filter((item) => {
+        const blob = [item.risks, item.conclusion, item.style, ...(item.requirementMatches || []).map((m) => `${m.requirement} ${m.evidence} ${m.conclusion}`)].join(" ");
+        return item.grade === "C" || blob.includes("硬广") || blob.includes("搬运") || excludes.some((term) => blob.includes(term));
+      }).length;
+    }
+
+    function selectedItem(list) {
+      return list.find((item) => item.id === state.selectedId);
+    }
+
+    function escapeAttr(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function matchTip(match) {
+      const evidence = match.evidence || "未提供依据";
+      const conclusion = match.conclusion ? `结论：${match.conclusion}` : "结论：待人工复核";
+      return `${match.requirement} · ${match.score}/100\n${evidence}\n${conclusion}`;
+    }
+
+    function renderMatchChips(matches) {
+      return (matches || []).map((match) => `
+        <span class="match-chip" tabindex="0" data-tip="${escapeAttr(matchTip(match))}">
+          ${match.requirement} ${match.score}
+        </span>
+      `).join("");
+    }
+
+    function renderDetail(list) {
+      const item = selectedItem(list);
+      if (!item) {
+        el("detail").innerHTML = `<h3>暂无候选</h3><p class="sub">调整筛选条件后重新启动分析。</p>`;
+        return;
+      }
+
+      const bars = [
+        ["视觉识人", item.visual],
+        ["口播教学", item.speaking],
+        ["综合匹配", item.score],
+        ["上镜展示力", item.display * 10]
+      ];
+      const matches = item.requirementMatches || [];
+
+      el("detail").innerHTML = `
+        <div class="detail-head">
+          <div>
+            <h3>${item.name}</h3>
+            <p class="sub">${item.platformName} · ${formatFans(item.fans)}粉丝 · 获赞 ${item.likes}</p>
+          </div>
+          <span class="pill ${gradeClass(item.grade)}">${item.grade}级推荐</span>
+        </div>
+        <div class="profile-img" style="background-image:url('${item.cover}')"></div>
+        <div class="tags">
+          ${item.product.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+          <span class="tag">${item.commercial}</span>
+        </div>
+        <div class="bars">
+          ${bars.map(([name, value]) => `
+            <div class="bar">
+              <div class="bar-top"><span>${name}</span><span>${value}</span></div>
+              <div class="track"><div class="fill" style="width:${value}%"></div></div>
+            </div>
+          `).join("")}
+        </div>
+        <div class="notes">
+          <div class="note"><strong>视觉结论：</strong>${item.bone}</div>
+          <div class="note"><strong>口播结论：</strong>${item.speakingText}</div>
+          <div class="note"><strong>主要风险：</strong>${item.risks}</div>
+          ${item.downloadUrl ? `<div class="note"><strong>无水印视频链接：</strong><a href="${item.downloadUrl}" target="_blank" rel="noreferrer">打开下载链接</a></div>` : ""}
+        </div>
+        ${matches.length ? `
+          <div class="match-summary">${renderMatchChips(matches)}</div>
+        ` : `<div class="note"><strong>逐项需求匹配：</strong>等待 Qwen 分析后显示标签得分与依据。</div>`}
+        <div class="actions">
+          <button class="secondary" type="button">加入 shortlist</button>
+          <button class="secondary" type="button">生成报告</button>
+        </div>
+      `;
+    }
+
+    function renderReport(list) {
+      const item = selectedItem(list);
+      if (!item) {
+        el("reportName").textContent = "当前：暂无";
+        el("reportGrid").innerHTML = "";
+        return;
+      }
+
+      el("reportName").textContent = `当前：${item.name}`;
+      el("reportGrid").innerHTML = `
+        <article class="report-box">
+          <h3>基础信息</h3>
+          <p>${item.platformName} / ${item.name} · ${formatFans(item.fans)}粉丝 · 获赞 ${item.likes}</p>
+          ${item.videoId ? `<p>视频ID：${item.videoId}</p>` : ""}
+          ${item.downloadUrl ? `<p>无水印下载链接：${item.downloadUrl}</p>` : ""}
+        </article>
+        <article class="report-box">
+          <h3>视觉评估</h3>
+          <p>${item.bone}</p>
+          <p>${item.skin}</p>
+          <p>${item.makeup} · 上镜 ${item.display}/10</p>
+        </article>
+        <article class="report-box">
+          <h3>口播与教学能力</h3>
+          <p>${item.speakingText}</p>
+          <p>教学 ${item.teaching}/10 · 手法 ${item.technique}/10 · 表达 ${item.fluency}/10</p>
+          <p>${item.skinExplain}</p>
+        </article>
+        <article class="report-box">
+          <h3>历史合作分析</h3>
+          <p>${item.frequency}</p>
+          <p>彩妆/底妆：${item.hasMakeup} · 价位：${item.price}</p>
+          <p>国货合作：${item.domestic} · ${item.commercial}</p>
+        </article>
+        <article class="report-box">
+          <h3>综合推荐</h3>
+          <p><strong>${item.grade}级 · ${item.score}分</strong></p>
+          <p>${item.conclusion}</p>
+        </article>
+        <article class="report-box">
+          <h3>风险与合作建议</h3>
+          <p>主要风险：${item.risks}</p>
+          <p>产品线：${item.product.join(" / ")}</p>
+          ${item.productFit ? `<p>Qwen适配判断：${item.productFit}</p>` : ""}
+          <p>${item.suggestion}</p>
+        </article>
+      `;
+    }
+
+    function renderVideoPool() {
+      const pool = filterCandidatesByPrompt(rawVideoPool);
+      const list = pool.length ? pool : currentList().map((item) => ({
+        title: item.style || item.title || item.name,
+        nickname: item.name,
+        platformName: item.platformName,
+        cover: item.cover,
+        homepageUrl: item.homepage,
+        source_url: item.homepage,
+        download_url: item.downloadUrl,
+        video_id: item.videoId,
+        stats: {
+          digg_count: Number(item.likes) || 0,
+          comment_count: 0,
+          share_count: 0,
+          collect_count: 0
+        }
+      })).slice(0, 6);
+
+      el("videoPoolCount").textContent = `${list.length} 位达人`;
+      const analyzeCount = Math.min(Number(el("limit").value || 10), pool.length || list.length, 10);
+      el("analyzeBtn").textContent = `Qwen 分析前 ${analyzeCount || Number(el("limit").value || 10)} 个`;
+      if (!list.length) {
+        el("videoPool").innerHTML = `<p class="sub">点击“启动自动搜索并生成候选”后，这里会显示待筛选视频与博主信息。</p>`;
+        return;
+      }
+
+      el("videoPool").innerHTML = list.map((item) => {
+        const stats = item.stats || {};
+        const author = item.author || {};
+        const nickname = item.nickname || author.nickname || "未知博主";
+        const homepage = item.homepageUrl || item.homepage || item.resolved_url || "";
+        const source = item.source_url || item.resolved_url || homepage || "#";
+        const download = item.download_url || item.downloadUrl || "";
+        const cover = item.cover || item.avatar || author.avatar || "";
+        const videoId = item.video_id || item.videoId || "";
+        const title = item.title || item.description || item.desc || `${nickname} 的命中视频`;
+        const analysis = item.qwenAnalysis;
+        const qwenError = item.qwenError;
+        const fans = wanFromCount(candidateFansCount(item));
+        const matches = analysis?.requirementMatches || [];
+        return `
+          <article class="video-item">
+            <div class="video-cover" style="background-image:url('${cover}')"></div>
+            <div class="video-meta">
+              <strong>${title}</strong>
+              <p class="sub">${item.platformName || "抖音"} · ${nickname} · ${fans ? `${formatFans(fans)}粉丝` : "粉丝数待识别"}${videoId ? ` · ${videoId}` : ""}</p>
+              <div class="video-stats">
+                <span>赞 ${stats.digg_count || item.totalLikes || 0}</span>
+                <span>评 ${stats.comment_count || 0}</span>
+                <span>转 ${stats.share_count || 0}</span>
+                <span>藏 ${stats.collect_count || 0}</span>
+              </div>
+              ${analysis ? `<div class="analysis-line">
+                <span class="pill ${gradeClass(analysis.grade)}">Qwen ${analysis.grade} · ${analysis.score}</span>
+                <span class="pill gray">${analysis.commercial || "已分析"}</span>
+              </div>` : ""}
+              ${matches.length ? `
+                <div class="match-summary">
+                  ${renderMatchChips(matches)}
+                </div>
+              ` : ""}
+              ${qwenError ? `<p class="sub">Qwen 失败：${qwenError}</p>` : ""}
+            </div>
+            <div class="video-actions">
+              <a href="${source}" target="_blank" rel="noreferrer">打开视频</a>
+              ${download ? `<a href="${download}" target="_blank" rel="noreferrer">下载链接</a>` : `<a href="${homepage || "#"}" target="_blank" rel="noreferrer">博主主页</a>`}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function render() {
+      updateSummary();
+      renderTable();
+      renderVideoPool();
+      renderHistory();
+    }
+
+    async function runRealSearch() {
+      const status = el("bridgeStatus");
+      status.textContent = "正在根据 Prompt 生成关键词，并自动搜索相关抖音视频...";
+      try {
+        const response = await fetch("http://127.0.0.1:8787/api/douyin/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: el("prompt").value,
+            product: el("product").value,
+            limit: Number(el("limit").value || 10)
+          })
+        });
+        const result = await response.json();
+        if (!result.ok) {
+          externalCreators = null;
+          const extra = result.keywords ? `关键词：${result.keywords.join("、")}。` : "";
+          status.textContent = `未读取到真实数据：${extra}${result.error || "搜索失败"} 页面已保留模拟候选池。`;
+          render();
+          return;
+        }
+        const rawParsed = result.candidates || [];
+        const parsed = dedupeByCreator(filterCandidatesByPrompt(rawParsed));
+        rawVideoPool = parsed;
+        externalCreators = dedupeByCreator(parsed.map(convertSearchCandidate));
+        const excludedCount = rawParsed.length - parsed.length;
+        status.textContent = `已自动搜索并解析 ${parsed.length} 位不重复达人。${excludedCount > 0 ? `已按 Prompt/去重规则过滤 ${excludedCount} 条候选。` : ""}关键词：${result.keywords.join("、")}。`;
+        state.selectedId = externalCreators[0]?.id || 1;
+        state.currentHistoryId = null;
+        render();
+        saveCurrentHistory("搜索完成", true);
+      } catch (err) {
+        externalCreators = null;
+        status.textContent = `本地桥接服务未启动或不可访问：${err.message}。页面已保留模拟候选池。`;
+        render();
+      }
+    }
+
+    async function runQwenAnalysis() {
+      const status = el("bridgeStatus");
+      if (!rawVideoPool.length) {
+        status.textContent = "请先完成视频搜索，再对待筛选视频池做 Qwen 分析。";
+        return;
+      }
+      const selectedCount = Math.max(1, Math.min(Number(el("limit").value || 10), 10));
+      const candidates = filterCandidatesByPrompt(rawVideoPool).slice(0, selectedCount);
+      if (!candidates.length) {
+        status.textContent = "当前 Prompt 已排除所有待分析视频，请重新搜索或放宽排除条件。";
+        return;
+      }
+      const analyses = [];
+      const errors = [];
+      const concurrency = 1;
+      let cursor = 0;
+      let completed = 0;
+      const frameCount = Math.max(3, Math.min(Number(el("frameCount").value || 6), 12));
+      status.textContent = `正在逐条抽取 ${frameCount} 张图，并调用 qwen3-vl-flash 分析 ${candidates.length} 条视频...`;
+      setQwenProgress(0, candidates.length, `准备抽取 ${frameCount} 张关键帧`, 0);
+      el("analyzeBtn").disabled = true;
+
+      async function analyzeOne(item, index) {
+        const nickname = item.nickname || item.author?.nickname || `第 ${index + 1} 条`;
+        status.textContent = `Qwen 正在分析 ${index + 1}/${candidates.length}：${nickname}`;
+        const response = await fetch("http://127.0.0.1:8787/api/qwen/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: el("prompt").value,
+            product: el("product").value,
+            frame_count: frameCount,
+            limit: 1,
+            candidates: [item]
+          })
+        });
+        const result = await response.json();
+        if (result.ok && result.analyses?.length) {
+          analyses.push(...result.analyses);
+          mergeQwenAnalyses(result.analyses);
+        } else {
+          const message = result.errors?.[0]?.error || result.error || "分析失败";
+          errors.push({ nickname, error: message });
+          markQwenError(item.video_id || item.videoId || "", message);
+        }
+        completed += 1;
+        setQwenProgress(completed, candidates.length, nickname, errors.length);
+        render();
+      }
+
+      try {
+        async function worker() {
+          while (cursor < candidates.length) {
+            const index = cursor;
+            cursor += 1;
+            await analyzeOne(candidates[index], index);
+          }
+        }
+        await Promise.all(Array.from({ length: concurrency }, worker));
+        state.selectedId = externalCreators?.[0]?.id || state.selectedId;
+        status.textContent = `Qwen 已完成 ${analyses.length}/${candidates.length} 位候选分析。${errors.length ? `有 ${errors.length} 条需要人工复核。` : ""}`;
+        render();
+        saveCurrentHistory("Qwen 分析完成", true);
+      } catch (err) {
+        status.textContent = `Qwen 分析服务不可用：${err.message}`;
+      } finally {
+        el("analyzeBtn").disabled = false;
+      }
+    }
+
+    async function saveQwenKey() {
+      const status = el("bridgeStatus");
+      const key = el("qwenKey").value.trim();
+      if (!key) {
+        status.textContent = "请先粘贴 Qwen API Key。";
+        return;
+      }
+      try {
+        const response = await fetch("http://127.0.0.1:8787/api/qwen/key", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key })
+        });
+        const result = await response.json();
+        if (!result.ok) {
+          status.textContent = `Qwen Key 保存失败：${result.error || "请检查格式"}`;
+          return;
+        }
+        el("qwenKey").value = "";
+        status.textContent = "Qwen Key 已保存到本机，可以开始分析前 10 个视频。";
+      } catch (err) {
+        status.textContent = `无法保存 Qwen Key：${err.message}`;
+      }
+    }
+
+    document.querySelectorAll("[data-platform]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-platform]").forEach((node) => node.classList.remove("active"));
+        btn.classList.add("active");
+        state.platform = btn.dataset.platform;
+        render();
+        scheduleLastWorkspaceSave("筛选条件更新");
+      });
+    });
+
+    ["prompt", "search", "product", "type", "grade", "commercial", "sort", "limit", "minFans", "maxFans", "frameCount"].forEach((id) => {
+      el(id).addEventListener("input", () => {
+        render();
+        scheduleLastWorkspaceSave("筛选条件更新");
+      });
+    });
+
+    el("runBtn").addEventListener("click", runRealSearch);
+    el("analyzeBtn").addEventListener("click", runQwenAnalysis);
+    el("saveQwenKeyBtn").addEventListener("click", saveQwenKey);
+    el("saveHistoryBtn").addEventListener("click", () => saveCurrentHistory("手动保存"));
+    el("resetBtn").addEventListener("click", () => {
+      externalCreators = null;
+      rawVideoPool = [];
+      state.currentHistoryId = null;
+      resetQwenProgress();
+      el("prompt").value = "筛选适合彩棠三色修容盘种草的中腰部达人，平台默认抖音和小红书，粉丝量 5-50 万。要求真人出镜，有骨相修容教学能力，能展示素颜或半脸对比，口播逻辑清晰，排除搬运号、剧情号和硬广感过强账号。";
+      el("product").value = "三色修容盘";
+      el("type").value = "all";
+      el("grade").value = "all";
+      el("commercial").value = "all";
+      el("sort").value = "score";
+      el("limit").value = "10";
+      el("frameCount").value = "6";
+      el("minFans").value = "5";
+      el("maxFans").value = "50";
+      el("search").value = "";
+      el("bridgeStatus").textContent = "后台已接入抖音登录态与视频解析服务。点击后会根据 Prompt 自动搜索相关视频。";
+      state.platform = "all";
+      document.querySelectorAll("[data-platform]").forEach((node) => node.classList.toggle("active", node.dataset.platform === "all"));
+      render();
+      saveLastWorkspace("恢复默认任务");
+    });
+
+    window.addEventListener("beforeunload", () => saveLastWorkspace("离开页面前自动保存"));
+
+    if (!restoreLastWorkspace()) {
+      render();
+      saveLastWorkspace("首次打开自动保存");
+    }
+  </script>
+</body>
+</html>
