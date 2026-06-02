@@ -80,6 +80,17 @@ const projects = {
 			"kuai/13.png"
 		]
 	},
+	wuchan: {
+		title: "物产中大云商公司",
+		meta: "媒介 · 达人投放与数据分析 · 2025.02 - 2025.05",
+		summary: "参与品牌推广中的达人筛选、建联、询价、商务谈判和投放数据分析，连接媒介执行、数据复盘与合作资源管理。",
+		points: [
+			"根据品牌推广需求定位 KOL/KOC，从粉丝量级、报价、CPM/CPE、内容风格和合作适配度等维度筛选达人。",
+			"负责与达人沟通询价和商务谈判，包括返点争取、保价协商等合作细节，推动合作流程顺畅落地。",
+			"通过 SQL 提取并分析达人投放数据，围绕曝光、互动、转化等指标输出合作效果分析报告。",
+			"维护达人合作数据库与资源台账，跟进合作进度、结算对账和合同流程，保障执行链路完整。"
+		]
+	},
 	suzhou: {
 		title: "苏州新晨传媒公司",
 		meta: "新媒体运营 · 小红书账号孵化 · 2022.12 - 2023.06",
@@ -102,11 +113,13 @@ const projects = {
 	digital: {
 		title: "多模态数字影像 / 诗路文化带资源平台",
 		meta: "数字文旅项目 · 多模态影像策划 · 2024.03 - 2025.12",
-		summary: "参与“善琏湖笔”多模态数字影像内容策划和“诗路文化带资源平台”建设，连接传统文化研究、影像生成与文旅资源可视化。",
+		summary: "参与多模态数字影像、诗路文化带资源平台、数字人影像生成方法与汉字雷达图等科研项目，承担文化内容策划、平台数据整理、宣传推广和视觉效果测试工作。",
 		points: [
-			"设计数字影像脚本，参与数字人视觉效果优化与测试。",
-			"整理文化遗产库和旅游产品库，为平台提供结构化数据。",
-			"相关成果获浙江省科学技术进步奖提名，项目兼具文化传播、数字内容生产与平台数据整理经验。"
+			"参与“善琏湖笔”多模态数字影像内容的创意策划，结合湖笔文化背景设计数字影像脚本，相关成果获浙江省科学技术进步奖提名。",
+			"负责项目成果传播推广与宣传策划，撰写并发布项目进展推文 3 篇，其中 2 篇通过研究院及地方官微平台发布。",
+			"参与发明专利“基于虚拟演播厅的数字人影像生成方法及系统”的技术实现，负责数字人视觉效果优化与测试。",
+			"参与“诗路文化带资源平台”建设，整理乡村文化遗产库和旅游产品库，将文化研究成果转化为可视化数字产品。",
+			"参与“一种汉字的雷达图显示方法”专利，撰写技术交底书并参与汉字雷达实验。"
 		],
 		images: [
 			"digital-culture/01.png",
@@ -243,7 +256,11 @@ if (project.manual) {
 	gallerySection.style.display = "none";
 } else {
 	manualSection.style.display = "none";
-	renderGallery(document.getElementById("project-gallery"), project.images);
+	if (project.images && project.images.length > 0) {
+		renderGallery(document.getElementById("project-gallery"), project.images);
+	} else {
+		gallerySection.style.display = "none";
+	}
 }
 
 const filesSection = document.getElementById("project-files-section");
