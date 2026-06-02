@@ -85,6 +85,32 @@ a {
 	padding: 28px;
 }
 
+.project-page-section {
+	min-height: calc(100vh - 64px);
+	scroll-margin-top: 24px;
+}
+
+.project-app-section::before,
+#project-manual-section::before {
+	display: inline-flex;
+	margin-bottom: 14px;
+	padding: 7px 10px;
+	border: 1px solid rgba(94, 234, 212, 0.28);
+	border-radius: 999px;
+	color: #5eead4;
+	font-size: 0.78rem;
+	font-weight: 800;
+	background: rgba(94, 234, 212, 0.08);
+}
+
+.project-app-section::before {
+	content: "PAGE 01";
+}
+
+#project-manual-section::before {
+	content: "PAGE 02";
+}
+
 .detail-section h2 {
 	margin: 0 0 18px;
 	color: #fff;
@@ -149,7 +175,6 @@ a {
 	background: #f8fafc;
 }
 
-.framework-preview iframe,
 .app-preview iframe {
 	display: block;
 	width: 100%;
@@ -157,8 +182,20 @@ a {
 	background: #fff;
 }
 
-.framework-preview iframe {
-	height: min(680px, 72vh);
+.framework-preview {
+	padding: 16px;
+}
+
+.framework-preview a,
+.framework-preview img {
+	display: block;
+}
+
+.framework-preview img {
+	width: 100%;
+	height: auto;
+	border-radius: 10px;
+	background: #fff;
 }
 
 .app-preview iframe {
@@ -270,7 +307,7 @@ a {
 		height: 620px;
 	}
 
-	.framework-preview iframe {
-		height: 520px;
+	.framework-preview {
+		padding: 8px;
 	}
 }

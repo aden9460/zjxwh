@@ -15,13 +15,33 @@ const projects = {
 			framework: {
 				title: "Agent 工作框架图",
 				description: "框架图展示了从投放需求输入、达人画像解析、筛选条件生成，到候选达人推荐与复盘指标追踪的完整链路，帮助快速理解该 Agent 如何服务美妆达人投放决策。",
-				href: "proya/framework-diagram.pdf"
+				href: "proya/framework-diagram.png"
 			},
 			video: {
 				title: "讲解视频",
 				description: "视频用于补充说明 Agent 的页面结构、核心筛选逻辑和使用流程，帮助观看者快速理解从投放需求输入到达人推荐结果输出的完整操作路径。",
 				src: "proya/agent-demo.mp4"
 			}
+		},
+		manual: {
+			title: "珀莱雅 KOL 手动筛选工作日常",
+			description: "这一部分展示在 Agent 搭建前后，我在美妆达人投放中完成的手动筛选、数据整理、达人建联和投放复盘工作。它和上方 Agent 页面形成对照：前者是可自动化的流程沉淀，后者是实际工作中的判断依据和执行细节。",
+			points: [
+				"围绕修颜乳、青衣气垫、粉底液等新品推广需求，手动整理达人基础信息、粉丝画像、报价、互动表现和内容风格。",
+				"结合 CTR、CPM、CPE、ROI 等投放指标进行复盘，判断达人是否适合继续合作或进入下一轮推荐清单。",
+				"通过表格台账维护达人资源、沟通进度和合作结果，为后续 Agent 规则设计提供真实业务样本。"
+			],
+			images: [
+				"proya/01.png",
+				"proya/02.png",
+				"proya/03.png",
+				"proya/04.png",
+				"proya/05.png",
+				"proya/06.png",
+				"proya/07.png",
+				"proya/08.png",
+				"proya/09.png"
+			]
 		},
 		images: [
 			"proya/01.png",
@@ -147,7 +167,8 @@ const appSection = document.getElementById("project-app-section");
 const appLink = document.getElementById("project-app-link");
 const appFrame = document.getElementById("project-app-frame");
 const frameworkBlock = document.getElementById("project-framework-block");
-const frameworkFrame = document.getElementById("project-framework-frame");
+const frameworkLink = document.getElementById("project-framework-link");
+const frameworkImage = document.getElementById("project-framework-image");
 const videoBlock = document.getElementById("project-video-block");
 const videoHolder = document.getElementById("project-video-holder");
 if (project.app) {
@@ -159,7 +180,9 @@ if (project.app) {
 	if (project.app.framework) {
 		document.getElementById("project-framework-title").textContent = project.app.framework.title;
 		document.getElementById("project-framework-description").textContent = project.app.framework.description;
-		frameworkFrame.src = project.app.framework.href;
+		frameworkLink.href = project.app.framework.href;
+		frameworkImage.src = project.app.framework.href;
+		frameworkImage.alt = project.app.framework.title;
 	} else {
 		frameworkBlock.style.display = "none";
 	}
@@ -186,21 +209,42 @@ if (project.app) {
 	appSection.style.display = "none";
 }
 
-const gallery = document.getElementById("project-gallery");
-(project.images || []).forEach((src) => {
-	const link = document.createElement("a");
-	link.href = src;
-	link.target = "_blank";
-	link.rel = "noopener noreferrer";
+const renderGallery = (target, images) => {
+	(images || []).forEach((src) => {
+		const link = document.createElement("a");
+		link.href = src;
+		link.target = "_blank";
+		link.rel = "noopener noreferrer";
 
-	const img = document.createElement("img");
-	img.src = src;
-	img.alt = project.title;
-	img.loading = "lazy";
+		const img = document.createElement("img");
+		img.src = src;
+		img.alt = project.title;
+		img.loading = "lazy";
 
-	link.appendChild(img);
-	gallery.appendChild(link);
-});
+		link.appendChild(img);
+		target.appendChild(link);
+	});
+};
+
+const manualSection = document.getElementById("project-manual-section");
+const pointsSection = document.getElementById("project-points-section");
+const gallerySection = document.getElementById("project-gallery-section");
+if (project.manual) {
+	document.getElementById("project-manual-title").textContent = project.manual.title;
+	document.getElementById("project-manual-description").textContent = project.manual.description;
+	const manualPoints = document.getElementById("project-manual-points");
+	(project.manual.points || []).forEach((point) => {
+		const item = document.createElement("li");
+		item.textContent = point;
+		manualPoints.appendChild(item);
+	});
+	renderGallery(document.getElementById("project-manual-gallery"), project.manual.images);
+	pointsSection.style.display = "none";
+	gallerySection.style.display = "none";
+} else {
+	manualSection.style.display = "none";
+	renderGallery(document.getElementById("project-gallery"), project.images);
+}
 
 const filesSection = document.getElementById("project-files-section");
 const files = document.getElementById("project-files");
