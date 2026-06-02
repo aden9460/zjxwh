@@ -10,8 +10,18 @@ const projects = {
 		],
 		app: {
 			title: "彩棠智能达人筛选 Agent 页面",
-			description: "该页面展示了围绕彩棠达人投放流程设计的智能筛选看板，包含需求拆解、达人画像、筛选条件、推荐结果与数据辅助决策逻辑。",
-			href: "proya/agent-dashboard.html"
+			description: "这一部分集中展示 Agent 的设计逻辑与可交互页面：先用框架图说明整体流程，再通过网页看板呈现需求拆解、达人画像、筛选条件、推荐结果与数据辅助决策逻辑。",
+			href: "proya/agent-dashboard.html",
+			framework: {
+				title: "Agent 工作框架图",
+				description: "框架图展示了从投放需求输入、达人画像解析、筛选条件生成，到候选达人推荐与复盘指标追踪的完整链路，帮助快速理解该 Agent 如何服务美妆达人投放决策。",
+				href: "proya/framework-diagram.pdf"
+			},
+			video: {
+				title: "讲解视频",
+				description: "视频用于补充说明 Agent 的页面结构、核心筛选逻辑和使用流程。当前原视频超过 GitHub 单文件 100MB 限制，页面已预留视频展示位；压缩到 100MB 以下或提供公开视频链接后即可直接接入。",
+				src: ""
+			}
 		},
 		images: [
 			"proya/01.png",
@@ -136,11 +146,42 @@ project.points.forEach((point) => {
 const appSection = document.getElementById("project-app-section");
 const appLink = document.getElementById("project-app-link");
 const appFrame = document.getElementById("project-app-frame");
+const frameworkBlock = document.getElementById("project-framework-block");
+const frameworkFrame = document.getElementById("project-framework-frame");
+const videoBlock = document.getElementById("project-video-block");
+const videoHolder = document.getElementById("project-video-holder");
 if (project.app) {
 	document.getElementById("project-app-title").textContent = project.app.title;
 	document.getElementById("project-app-description").textContent = project.app.description;
 	appLink.href = project.app.href;
 	appFrame.src = project.app.href;
+
+	if (project.app.framework) {
+		document.getElementById("project-framework-title").textContent = project.app.framework.title;
+		document.getElementById("project-framework-description").textContent = project.app.framework.description;
+		frameworkFrame.src = project.app.framework.href;
+	} else {
+		frameworkBlock.style.display = "none";
+	}
+
+	if (project.app.video) {
+		document.getElementById("project-video-title").textContent = project.app.video.title;
+		document.getElementById("project-video-description").textContent = project.app.video.description;
+		if (project.app.video.src) {
+			const video = document.createElement("video");
+			video.controls = true;
+			video.preload = "metadata";
+			video.src = project.app.video.src;
+			videoHolder.appendChild(video);
+		} else {
+			const placeholder = document.createElement("p");
+			placeholder.className = "video-placeholder";
+			placeholder.textContent = "视频文件待压缩或上传外链后展示。";
+			videoHolder.appendChild(placeholder);
+		}
+	} else {
+		videoBlock.style.display = "none";
+	}
 } else {
 	appSection.style.display = "none";
 }

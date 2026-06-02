@@ -120,6 +120,28 @@ a {
 	line-height: 1.8;
 }
 
+.asset-block {
+	margin: 22px 0;
+}
+
+.asset-copy {
+	margin-bottom: 14px;
+}
+
+.asset-copy h3 {
+	margin: 0 0 8px;
+	color: #fff;
+	font-size: 1.08rem;
+}
+
+.asset-copy p {
+	max-width: 900px;
+	margin: 0;
+	color: #cbd5e1;
+	line-height: 1.8;
+}
+
+.framework-preview,
 .app-preview {
 	overflow: hidden;
 	border: 1px solid rgba(148, 163, 184, 0.2);
@@ -127,12 +149,43 @@ a {
 	background: #f8fafc;
 }
 
+.framework-preview iframe,
 .app-preview iframe {
 	display: block;
 	width: 100%;
-	height: min(760px, 78vh);
 	border: 0;
 	background: #fff;
+}
+
+.framework-preview iframe {
+	height: min(680px, 72vh);
+}
+
+.app-preview iframe {
+	height: min(760px, 78vh);
+}
+
+.video-holder {
+	overflow: hidden;
+	border: 1px solid rgba(148, 163, 184, 0.2);
+	border-radius: 16px;
+	background: rgba(15, 23, 42, 0.72);
+}
+
+.video-holder video {
+	display: block;
+	width: 100%;
+	max-height: 680px;
+	background: #020617;
+}
+
+.video-placeholder {
+	margin: 0;
+	padding: 28px;
+	color: #cbd5e1;
+	line-height: 1.8;
+	text-align: center;
+	background: linear-gradient(145deg, rgba(94, 234, 212, 0.1), rgba(99, 102, 241, 0.1));
 }
 
 .point-list {
@@ -215,5 +268,9 @@ a {
 
 	.app-preview iframe {
 		height: 620px;
+	}
+
+	.framework-preview iframe {
+		height: 520px;
 	}
 }
